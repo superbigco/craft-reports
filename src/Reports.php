@@ -73,7 +73,7 @@ class Reports extends Plugin
     /**
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public $schemaVersion = '1.0.1';
 
     // Public Methods
     // =========================================================================
@@ -103,7 +103,7 @@ class Reports extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function(RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'reports/reports';
+                $event->rules['reports/schedule/run'] = 'reports/schedule/run';
             }
         );
 
@@ -157,17 +157,17 @@ class Reports extends Plugin
     public function getCpRoutes(): array
     {
         return [
-            'reports'                         => 'reports/reports/index',
-            'reports/edit/<id:\d+>'           => 'reports/reports/edit',
-            'reports/run/<id:\d+>'            => 'reports/reports/run',
-            'reports/export/<id:\d+>'         => 'reports/reports/export',
-            'reports/new'                     => 'reports/reports/new',
+            'reports'                       => 'reports/reports/index',
+            'reports/edit/<id:\d+>'         => 'reports/reports/edit',
+            'reports/run/<id:\d+>'          => 'reports/reports/run',
+            'reports/export/<id:\d+>'       => 'reports/reports/export',
+            'reports/new'                   => 'reports/reports/new',
 
             // Targets
-            'reports/targets'                 => 'reports/targets/index',
-            'reports/targets/edit/<id:\d+>'   => 'reports/targets/edit',
-            'reports/targets/run/<id:\d+>'    => 'reports/targets/run',
-            'reports/targets/new'             => 'reports/targets/new',
+            'reports/targets'               => 'reports/targets/index',
+            'reports/targets/edit/<id:\d+>' => 'reports/targets/edit',
+            'reports/targets/run/<id:\d+>'  => 'reports/targets/run',
+            'reports/targets/new'           => 'reports/targets/new',
         ];
     }
 

@@ -45,7 +45,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Handle"|t,
         instructions: "How will you refer to this target in templates."|t,
         id: 'handle',
@@ -53,6 +52,15 @@
         value: target.handle,
         errors: target.getErrors('handle'),
         required: true
+    }) }}
+
+    {{ forms.checkboxGroupField({
+        label: "Reports to include in target"|t,
+        instructions: "Selects the reports you want to be included in this report. The target will also show up under the report's export button"|t,
+        id: 'connectedReportIds',
+        name: 'connectedReportIds',
+        options: reportOptions,
+        values: connectedReportIds,
     }) }}
 
     {{ typeSettingsHtml }}

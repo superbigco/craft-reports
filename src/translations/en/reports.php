@@ -23,5 +23,6 @@ return [
     'Report was saved'      => 'Report was saved',
 
     // Report Targets
-    'Slack'      => 'Slack',
+    'Email'                 => 'Email',
+    'Slack'                 => 'Slack',
 ];

@@ -46,6 +46,19 @@ class ReportTarget extends Model
     }
 
     /**
+     * @return null|\superbig\reports\targets\ReportTarget
+     */
+    public function getTargetType()
+    {
+        $selectedDefinition = array_merge(
+            $this->settings[ $this->targetClass ] ?? [],
+            ['type' => $this->targetClass]
+        );
+
+        return Reports::$plugin->getTarget()->createTargetType($selectedDefinition);
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules()

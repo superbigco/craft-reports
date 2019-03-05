@@ -18,7 +18,27 @@
         <div class="buttons right">
             {% if report.id is not null %}
                 <a href="{{ url("reports/edit/#{report.id}") }}" class="btn ">{{ "Edit"|t('reports') }}</a>
-                <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+                {% if connectedTargets|length %}
+                    <div class="btngroup">
+                        <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+
+                        <div class="btn submit menubtn"></div>
+                        <div class="menu">
+                            <ul>
+                                {% for target in connectedTargets %}
+                                    <li>
+                                        <a href="{{ url('reports/targets/run/'~target.id) }}" data-target-id="{{ target.id }}">
+                                            {{ target.name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+                {% endif %}
             {% endif %}
         </div>
     {% endif %}

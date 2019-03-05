@@ -10,10 +10,14 @@
 
 namespace superbig\reports\services;
 
+use craft\helpers\FileHelper;
+use craft\helpers\StringHelper;
+use League\Csv\Writer;
 use superbig\reports\Reports;
 
 use Craft;
 use craft\base\Component;
+use yii\base\Exception;
 
 /**
  * @author    Superbig
@@ -25,35 +29,45 @@ class Export extends Component
     // Public Methods
     // =========================================================================
 
-    public function exportCsv($id = null)
+    public function csv(\superbig\reports\models\Report $report)
     {
+        // @todo Check if successful
+        $result   = Reports::$plugin->getReport()->runReport($report);
+        $filename = $result->getFilename() . '-' . date('YmdHis') . '.csv';
+        $csv      = Writer::createFromString('');
 
-        if (!$id) {
-            Craft::$app->end();
+        if (!empty($result->getHeader())) {
+            $csv->insertOne($result->getHeader());
+
         }
 
-        $report          = $this->getReportById($id);
-        $report->lastRun = new \DateTime();
-        $this->saveReport($report);
-        $data = $this->parseReport($report);
-        // Craft::dd($data);
-        // Prepare and write temp file to disk
-        FileHelper::createDirectory(Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . 'craft-reports');
-        $fileName = $report->type . "-" . date("YmdHis") . ".csv";
-        $tempFile = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . 'craft-reports' . DIRECTORY_SEPARATOR . $fileName;
-        if (($handle = fopen($tempFile, 'wb')) === false) {
-            throw new Exception('Could not create temp file: ' . $tempFile);
+        if (!empty($result->getContent())) {
+            $csv->insertAll($result->getContent());
         }
-        fclose($handle);
-        $csv = Writer::createFromPath(new \SplFileObject($tempFile, 'a+'), 'w');
-        if (isset($data['columns'])) {
-            $csv->insertOne($data['columns']);
-        }
-        foreach ($data['rows'] as $row) {
-            $csv->insertOne($row);
-        }
-        // send email with attachment
-        Reports::$plugin->emails->sendEmail($fileName, $report->email);
-        unlink($tempFile);
+
+        $mimeType = 'text/csv';
+        $path     = $this->_write((string)$csv, $filename, $mimeType);
+
+        return [
+            'filename' => $filename,
+            'path'     => $path,
+            'mimeType' => $mimeType,
+        ];
+    }
+
+    private function _write($content, $filename, $mimeType): string
+    {
+        $tempPath     = Craft::$app->path->getTempPath() . DIRECTORY_SEPARATOR . 'reports' . DIRECTORY_SEPARATOR;
+        $tempFilename = StringHelper::randomString(12) . "-{$filename}";
+        $config       = [
+            'filename'     => $filename,
+            'tempFilename' => $tempFilename,
+            'mimeType'     => $mimeType,
+        ];
+
+        $path = $tempPath . $tempFilename;
+        FileHelper::writeToFile($path, $content);
+
+        return $path;
     }
 }

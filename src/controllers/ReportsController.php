@@ -66,7 +66,8 @@ class ReportsController extends Controller
         $report = new Report();
 
         $this->renderTemplate('reports/reports/edit', [
-            'report' => $report,
+            'report'           => $report,
+            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
         ]);
     }
 
@@ -75,7 +76,8 @@ class ReportsController extends Controller
         $report = Reports::$plugin->getReport()->getReportById($id);
 
         return $this->renderTemplate('reports/reports/edit', [
-            'report' => $report,
+            'report'           => $report,
+            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
         ]);
     }
 
@@ -92,26 +94,20 @@ class ReportsController extends Controller
         $result = Reports::$plugin->getReport()->runReport($id);
 
         return $this->renderTemplate('reports/reports/run', [
-            'report' => $report,
-            'result' => $result,
+            'report'           => $report,
+            'result'           => $result,
+            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
         ]);
     }
 
     public function actionExport(int $id = null)
     {
-        $reportId = null;
+        $report = Reports::$plugin->getReport()->getReportById($id);
+        $info   = Reports::$plugin->getExport()->csv($report);
 
-        if (isset($variables['reportId'])) {
-            $reportId = $variables['reportId'];
-        }
-
-        if (empty($reportId)) {
-            $this->redirect('reports');
-        }
-
-        craft()->reports->exportCsv($reportId);
-
-        craft()->end();
+        return Craft::$app->getResponse()->sendFile($info['path'], $info['filename'], [
+            'mimeType' => $info['mimeType'],
+        ]);
     }
 
 

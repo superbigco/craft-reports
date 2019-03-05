@@ -15,6 +15,7 @@ use craft\mail\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use superbig\reports\models\Report;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -35,39 +36,37 @@ class EmailTarget extends ReportTarget
         return \Craft::t('reports', 'Email');
     }
 
-    public function send(Report $report): bool
+    public function send(\superbig\reports\models\ReportTarget $target, array $reports = []): bool
     {
-        $renderVariables = [
-
-        ];
-
-        $originalLanguage     = Craft::$app->language;
-        $view                 = Craft::$app->getView();
-        $oldTemplateMode      = $view->getTemplateMode();
-        Craft::$app->language = $originalLanguage;
+        $view            = Craft::$app->getView();
+        $oldTemplateMode = $view->getTemplateMode();
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
 
-        $newEmail = new Message();
-        $newEmail->setTo($this->emails);
-        $newEmail->setFrom(\craft\helpers\App::mailSettings()->fromEmail);
-        $newEmail->setSubject('Report');
+        $message = new Message();
+        $message->setTo($this->_getEmails());
+        $message->setFrom(\craft\helpers\App::mailSettings()->fromEmail);
+        $message->setSubject($this->subject);
 
-        if ($templatePath && $view->doesTemplateExist($templatePath)) {
-            $body = $view->renderTemplate($templatePath, $renderVariables);
-            $newEmail->setHtmlBody($body);
+        $variables = [
+            'reports' => $reports,
+        ];
+        $body      = $view->renderString($this->body, $variables);
+        $message->setHtmlBody($body);
+
+        foreach ($reports as $report) {
+            $info = Reports::$plugin->getExport()->csv($report);
+
+            $path = $info['path'];
+
+            if (file_exists($path)) {
+                $message->attach($path, [
+                    'fileName' => $info['filename'],
+                ]);
+            }
         }
 
-        //$file = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . 'craft-reports' . DIRECTORY_SEPARATOR . $fileName;
-
-        /*if (file_exists($file)) {
-            $newEmail->attach($file, [
-                'fileName' => $fileName,
-            ]);
-        }*/
-
-        if (!Craft::$app->getMailer()->send($newEmail)) {
-
+        if (!Craft::$app->getMailer()->send($message)) {
             $error = Craft::t(
                 'reports',
                 'Email Error: {error}',
@@ -76,17 +75,14 @@ class EmailTarget extends ReportTarget
                 ]);
 
             Craft::error($error, __METHOD__);
-
-            Craft::$app->language = $originalLanguage;
-
             $view->setTemplateMode($oldTemplateMode);
 
             return false;
         }
 
-        Craft::$app->language = $originalLanguage;
-
         $view->setTemplateMode($oldTemplateMode);
+
+        return true;
     }
 
     public function formatMessage(Report $report)
@@ -117,6 +113,13 @@ class EmailTarget extends ReportTarget
         ]);
 
         return $rules;
+    }
+
+    private function _getEmails()
+    {
+        return array_map(function($row) {
+            return $row['email'];
+        }, $this->emails);
     }
 
 }

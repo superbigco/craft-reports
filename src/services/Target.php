@@ -13,10 +13,12 @@ namespace superbig\reports\services;
 use craft\db\Query;
 use craft\web\twig\TemplateLoaderException;
 use superbig\reports\models\ReportTarget as ReportTargetModel;
+use superbig\reports\records\ReportsTargetsRecord;
 use superbig\reports\records\TargetRecord;
 
 use Craft;
 use craft\base\Component;
+use superbig\reports\Reports;
 use superbig\reports\targets\EmailTarget;
 use superbig\reports\targets\ReportTarget;
 use superbig\reports\targets\ReportTargetInterface;
@@ -102,54 +104,93 @@ class Target extends Component
         return $this->_targets;
     }
 
+    public function getConnectedTargetsForReport(\superbig\reports\models\Report $report): array
+    {
+        $targetIds = (new Query())
+            ->select('targetId')
+            ->from(ReportsTargetsRecord::tableName())
+            ->where(
+                'reportId = :reportId',
+                [':reportId' => $report->id]
+            )
+            ->column();
+
+        return array_filter(
+            $this->getAllReportTargets(),
+            function(ReportTargetModel $reportTarget) use ($targetIds) {
+                return \in_array($reportTarget->id, $targetIds, false);
+            });
+    }
+
+    public function getConnectedReportIds(ReportTargetModel $target): array
+    {
+        return (new Query())
+            ->select('reportId')
+            ->from(ReportsTargetsRecord::tableName())
+            ->where(
+                'targetId = :targetId',
+                [':targetId' => $target->id]
+            )
+            ->column();
+    }
+
+    public function getConnectedReportsForTarget(\superbig\reports\models\ReportTarget $target): array
+    {
+        $reportIds = (new Query())
+            ->select('reportId')
+            ->from(ReportsTargetsRecord::tableName())
+            ->where(
+                'targetId = :targetId',
+                [':targetId' => $target->id]
+            )
+            ->column();
+
+        return array_filter(
+            Reports::$plugin->getReport()->getAllReports(),
+            function(\superbig\reports\models\Report $report) use ($reportIds) {
+                return \in_array($report->id, $reportIds, false);
+            });
+    }
+
+    public function syncTargetReportRelationship(ReportTargetModel $target, array $reportIds = [])
+    {
+        // Delete existing relationships
+        (new Query())
+            ->createCommand()
+            ->delete(
+                ReportsTargetsRecord::tableName(),
+                'targetId = :targetId',
+                [':targetId' => $target->id]
+            )
+            ->execute();
+
+        foreach ($reportIds as $reportId) {
+            (new Query())
+                ->createCommand()
+                ->insert(
+                    ReportsTargetsRecord::tableName(),
+                    [
+                        'targetId' => $target->id,
+                        'reportID' => $reportId,
+                    ]
+                )
+                ->execute();
+        }
+    }
+
     /**
      * @param null $id
      *
-     * @return array
-     * @throws Exception
+     * @return bool
      * @throws \yii\base\Exception
      */
-    public function runReportTarget($id = null): ReportTargetResult
+    public function runReportTarget($id = null): bool
     {
-        $report              = $this->getReportTargetById($id);
-        $report->dateLastRun = new \DateTime();
+        $target           = $this->getReportTargetById($id);
+        $connectedReports = $this->getConnectedReportsForTarget($target);
+        $targetType       = $target->getTargetType();
 
-        // @todo try/catch and return error
-        $this->saveReportTarget($report);
-        $result = new ReportTargetResult();
-
-        $view            = Craft::$app->getView();
-        $oldTemplateMode = $view->getTemplateMode();
-        $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
-
-        try {
-            // Render template and allow data and settings to be set in Twig
-            $view->renderString($report->content, ['result' => $result]);
-            //$view->renderString($report->settings, ['result' => $result]);
-        } catch (TemplateLoaderException $e) {
-            $error = Craft::t(
-                'reports',
-                "Template Error: {error}\n{trace}",
-                [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]
-            );
-            $result->addError('content', $error);
-        } catch (\Exception $e) {
-            $error = Craft::t(
-                'reports',
-                'Template Error: {error}',
-                [
-                    'error' => $e->getMessage(),
-                ]
-            );
-            $result->addError('content', $error);
-        }
-
-        $view->setTemplateMode($oldTemplateMode);
-
-        return $result;
+        return $targetType->send($target, $connectedReports);
     }
 
     /**
@@ -189,6 +230,8 @@ class Target extends Component
         try {
             $record->save(false);
             $transaction->commit();
+
+            $report->id = $record->id;
         } catch (\Exception $e) {
             $transaction->rollBack();
 

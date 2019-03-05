@@ -21,5 +21,11 @@ use superbig\reports\models\Report;
  */
 interface ReportTargetInterface extends SavableComponentInterface
 {
-    public function send(Report $report): bool;
+    /**
+     * @param \superbig\reports\models\ReportTarget $target
+     * @param Report[]                              $reports
+     *
+     * @return bool
+     */
+    public function send(\superbig\reports\models\ReportTarget $target, array $reports = []): bool;
 }

@@ -12,6 +12,7 @@ namespace superbig\reports\controllers;
 
 use craft\helpers\ArrayHelper;
 use craft\helpers\Template;
+use craft\helpers\UrlHelper;
 use superbig\reports\models\Report;
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
@@ -69,8 +70,10 @@ class TargetsController extends Controller
         $target = new ReportTarget();
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'           => $target,
-            'typeSettingsHtml' => $this->_editView($target),
+            'target'             => $target,
+            'reportOptions'      => $this->_getReportOptions(),
+            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
+            'typeSettingsHtml'   => $this->_editView($target),
         ]);
     }
 
@@ -79,8 +82,10 @@ class TargetsController extends Controller
         $target = Reports::$plugin->getTarget()->getReportTargetById($id);
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'           => $target,
-            'typeSettingsHtml' => $this->_editView($target),
+            'target'             => $target,
+            'reportOptions'      => $this->_getReportOptions(),
+            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
+            'typeSettingsHtml'   => $this->_editView($target),
         ]);
     }
 
@@ -88,18 +93,26 @@ class TargetsController extends Controller
      * @param int|null $id
      *
      * @return \yii\web\Response
+     * @throws \craft\errors\MissingComponentException
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
      */
     public function actionRun(int $id = null)
     {
-        $report = Reports::$plugin->getTarget()->getReportTargetById($id);
-        $result = Reports::$plugin->getTarget()->runReport($id);
+        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $result = Reports::$plugin->getTarget()->runReportTarget($id);
 
-        return $this->renderTemplate('reports/_targets/run', [
-            'report' => $report,
-            'result' => $result,
-        ]);
+        if (!$result) {
+            $error = 'Failed to run ' . $target->name;
+            Craft::$app->getSession()->setError($error);
+
+            return $this->redirect(UrlHelper::cpUrl('reports/targets'));
+        }
+
+        $notice = 'Successfully ran ' . $target->name;
+        Craft::$app->getSession()->setNotice($notice);
+
+        return $this->goBack(UrlHelper::cpUrl('reports/targets'));
     }
 
     public function actionSave()
@@ -118,6 +131,7 @@ class TargetsController extends Controller
         $target->handle      = $request->getParam('handle');
         $target->targetClass = $request->getParam('targetClass');
         $target->settings    = $request->getParam('settings');
+        $connectedReportIds  = $request->getParam('connectedReportIds');
 
         // Save it
         if (!Reports::$plugin->getTarget()->saveReportTarget($target)) {
@@ -127,6 +141,8 @@ class TargetsController extends Controller
 
             return;
         }
+
+        Reports::$plugin->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
 
         $notice = Craft::t(
             'reports',
@@ -192,5 +208,18 @@ class TargetsController extends Controller
         }
 
         return '';
+    }
+
+    private function _getReportOptions()
+    {
+        return array_map(
+            function(Report $report) {
+                return [
+                    'label' => $report->name,
+                    'value' => $report->id,
+                ];
+            },
+            Reports::$plugin->getReport()->getAllReports()
+        );
     }
 }

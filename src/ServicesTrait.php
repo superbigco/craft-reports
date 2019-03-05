@@ -12,6 +12,7 @@ namespace superbig\reports;
 
 use superbig\reports\services\Chart;
 use superbig\reports\services\Email;
+use superbig\reports\services\Export;
 use superbig\reports\services\Report;
 use superbig\reports\services\Target;
 use superbig\reports\services\Widget;
@@ -22,6 +23,7 @@ trait ServicesTrait
     {
         $this->setComponents([
             'email'  => Email::class,
+            'export' => Export::class,
             'report' => Report::class,
             'chart'  => Chart::class,
             'widget' => Widget::class,
@@ -35,6 +37,11 @@ trait ServicesTrait
     public function getReport(): Report
     {
         return $this->get('report');
+    }
+
+    public function getExport(): Export
+    {
+        return $this->get('export');
     }
 
     public function getEmail(): Email

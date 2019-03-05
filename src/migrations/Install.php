@@ -11,6 +11,7 @@
 namespace superbig\reports\migrations;
 
 use superbig\reports\records\ReportsRecord;
+use superbig\reports\records\ReportsTargetsRecord;
 use superbig\reports\records\TargetRecord;
 use superbig\reports\Reports;
 
@@ -113,6 +114,41 @@ class Install extends Migration
             );
         }
 
+        $tableSchema = Craft::$app->db->schema->getTableSchema(ReportsTargetsRecord::tableName());
+        if ($tableSchema === null) {
+            $tablesCreated = true;
+            $this->createTable(
+                ReportsTargetsRecord::tableName(),
+                [
+                    'id'          => $this->primaryKey(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid'         => $this->uid(),
+                    'siteId'      => $this->integer()->notNull(),
+                    'name'        => $this->string(255)->notNull()->defaultValue(''),
+                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
+                    'content'     => $this->text(),
+                    'settings'    => $this->text(),
+                    'dateLastRun' => $this->dateTime()->null(),
+                ]
+            );
+        }
+
+        $tableSchema = Craft::$app->db->schema->getTableSchema(ReportsTargetsRecord::tableName());
+        if ($tableSchema === null) {
+            $this->createTable(
+                ReportsTargetsRecord::tableName(),
+                [
+                    'id'          => $this->primaryKey(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid'         => $this->uid(),
+                    'reportId'    => $this->integer()->notNull(),
+                    'targetId'    => $this->integer()->notNull(),
+                ]
+            );
+        }
+
         return $tablesCreated;
     }
 
@@ -150,6 +186,26 @@ class Install extends Migration
             ReportsRecord::tableName(),
             'siteId',
             '{{%sites}}',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'reportId'),
+            ReportsTargetsRecord::tableName(),
+            'reportId',
+            ReportsRecord::tableName(),
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'targetId'),
+            ReportsTargetsRecord::tableName(),
+            'targetId',
+            TargetRecord::tableName(),
             'id',
             'CASCADE',
             'CASCADE'
