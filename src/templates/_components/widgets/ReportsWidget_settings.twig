@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Reports plugin for Craft CMS
+ *
+ * ReportsWidget Widget Settings
+ *
+ * @author    Superbig
+ * @copyright Copyright (c) 2019 Superbig
+ * @link      https://superbig.co
+ * @package   Reports
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}
+
+{{ forms.textField({
+    label: 'Message',
+    instructions: 'Enter a message here.',
+    id: 'message',
+    name: 'message',
+    value: widget['message']})
+}}

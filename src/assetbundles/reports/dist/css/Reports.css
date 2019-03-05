@@ -1,0 +1,21 @@
+/**
+ * Reports plugin for Craft CMS
+ *
+ * Reports CSS
+ *
+ * @author    Superbig
+ * @copyright Copyright (c) 2019 Superbig
+ * @link      https://superbig.co
+ * @package   Reports
+ * @since     1.0.0
+ */
+.reports__content-editor {
+    min-height: 600px;
+    height: 600px;
+}
+
+.CodeMirror.cm-s-default {
+    border: 1px solid #e3e5e8;
+    border-radius: 3px;
+    height: 600px;
+}

@@ -1,0 +1,22 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.selectField({
+    label: "Target Type"|t('reports'),
+    instructions: "Select the target type to use."|t('reports'),
+    id: 'targetClass',
+    name: 'targetClass',
+    value: target.targetClass,
+    options: targetOptions,
+    class: 'pm-targetType',
+}) }}
+
+{% for targetType in allTargetTypes %}
+    {% set isCurrent = (targetType == className(selectedTargetType)) %}
+    <div id="{{ targetType|id }}"
+         class="pm-targetType-settings {{ 'pm-' ~ targetType|id ~ '-method' }}" {% if not isCurrent %} style="display: none;"{% endif %}>
+        {% namespace 'settings['~targetType~']' %}
+            {% set _targetType = isCurrent ? selectedTargetType : craft.reports.createTargetType(targetType) %}
+            {{ _targetType.getSettingsHtml()|raw }}
+        {% endnamespace %}
+    </div>
+{% endfor %}

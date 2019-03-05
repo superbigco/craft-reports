@@ -1,0 +1,39 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    first: true,
+    label: "Subject"|t,
+    instructions: "What this target will be called in the CP."|t,
+    id: 'subject',
+    name: 'subject',
+    value: targetType.subject,
+    errors: targetType.getErrors('subject'),
+    required: true,
+}) }}
+
+{{ forms.editableTableField({
+    label: "Recipient Emails"|t('reports'),
+    instructions: "Define one or more emails to receieve this report."|t('reports'),
+    id: 'emails',
+    name: 'emails',
+    cols: {
+        email: {
+            type: 'singleline',
+            heading: "Email Address"|t('reports'),
+        },
+    },
+    rows: targetType.emails,
+    staticRows: false,
+}) }}
+
+{{ forms.textareaField({
+    label: "Email Body"|t,
+    instructions: "The email body will have access to the report and the type"|t,
+    id: 'body',
+    class: 'reports__code-editor js-reportsEditor',
+    name: 'body',
+    value: targetType.body,
+    errors: targetType.getErrors('body'),
+    rows: 20,
+    required: false
+}) }}

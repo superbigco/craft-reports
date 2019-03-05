@@ -1,0 +1,68 @@
+{% if report.id is not null and not currentUser.can('reports-run') %}
+    {% redirect 'reports' %}
+{% endif %}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set crumbs = [
+    { label: "Reports"|t, url: url('reports') },
+    { label: "#{report.name}"|t, url: url("reports/edit/#{report.id}") },
+] %}
+
+{% set fullPageForm = true %}
+{% set title = "Report Result - #{report.name}"|t %}
+
+{% block actionButton %}
+    {% if currentUser.can('reports-create') %}
+        <div class="buttons right">
+            {% if report.id is not null %}
+                <a href="{{ url("reports/edit/#{report.id}") }}" class="btn ">{{ "Edit"|t('reports') }}</a>
+                <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if result.hasErrors() %}
+        <h1>There was a problem rendering this report:</h1>
+        <ul>
+            {% for key,errors in result.getErrors() %}
+                {% for error in errors %}
+                    <li>
+                        <pre>
+                            {%- spaceless %}
+                                {{ error }}
+                            {% endspaceless -%}
+                        </pre>
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if result.getContent() | length %}
+        <table class="data fullwidth">
+            {% if result.getHeader() | length %}
+                <thead>
+                <tr>
+                    {% for column in result.getHeader() %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+            {% endif %}
+            <tbody>
+            {% for row in result.getContent() %}
+                <tr>
+                    {% for column in row %}
+                        <td>{{ column }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{#{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}#}

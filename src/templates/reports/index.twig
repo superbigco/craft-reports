@@ -1,0 +1,69 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Reports plugin for Craft CMS 3.x
+ *
+ * Reports index.twig
+ *
+ * @author    Superbig
+ * @copyright Copyright (c) 2019 Superbig
+ * @link      https://superbig.co
+ * @package   Reports
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{% set title = "Reports" %}
+
+{% block actionButton %}
+    {% if currentUser.can('reports-create') %}
+        <div class="buttons right">
+            <a href="{{ url('reports/new') }}" class="submit btn add icon">{{ "New report"|t }}</a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% set content %}
+    <p id="js-noReports"{% if reports %} class="hidden"{% endif %}>
+        {{ "No reports exist yet."|t }}
+    </p>
+
+    {% if reports %}
+        <table id="js-reports" class="data fullwidth collapsible">
+            <thead>
+            <th scope="col">{{ "Name"|t }}</th>
+            <th scope="col">{{ "Handle"|t }}</th>
+            <td class="thin"></td>
+            <td class="thin"></td>
+            <td class="thin"></td>
+            </thead>
+            <tbody>
+            {% for report in reports %}
+                <tr data-id="{{ report.id }}" data-name="{{ report.name|t }}">
+                    <th scope="row" data-title="{{ 'Name'|t }}"><a href="{{ url('reports/edit/' ~ report.id) }}">{{ report.name|t }}</a>
+                    </th>
+                    <td data-title="{{ 'Handle'|t }}"><code>{{ report.handle }}</code></td>
+                    <td class="thin"><a class="icon run" title="{{ 'Run'|t }}" href="{{ url('reports/run/' ~ report.id) }}">Run</a></td>
+                    <td class="thin"><a class="icon export" title="{{ 'Export'|t }}" href="{{ url('reports/export/' ~ report.id) }}">Export</a></td>
+                    <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endset %}
+
+{% js %}
+    new Craft.AdminTable({
+    tableSelector: '#js-reports',
+    noObjectsSelector: '#js-noReports',
+    deleteAction: 'reports/reports/delete'
+    });
+{% endjs %}
+

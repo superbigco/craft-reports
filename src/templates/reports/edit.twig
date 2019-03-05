@@ -1,0 +1,101 @@
+{% if report.id is not null and not currentUser.can('reports-edit') %}
+    {% redirect 'reports' %}
+{% endif %}
+
+{% if report.id == null and not currentUser.can('reports-create') %}
+    {% redirect 'reports' %}
+{% endif %}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set crumbs = [
+    { label: "Reports"|t, url: url('reports') }
+] %}
+
+{% set fullPageForm = true %}
+{% set title = report.id ? "Edit report"|t : "Create report"|t %}
+
+{% block actionButton %}
+    {% if currentUser.can('reports-create') %}
+        <div class="buttons right">
+            {% if report.id is not null %}
+                {# <a href="{{ url("reports/export/#{report.id}") }}" class="btn">{{ "Export"|t('reports') }}</a>#}
+                <a href="{{ url("reports/run/#{report.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
+            {% endif %}
+            <input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {{ forms.hidden({
+        name: 'action',
+        value: 'reports/reports/save',
+    }) }}
+
+    {{ redirectInput('reports/edit/{id}') }}
+
+    {% if report.id %}
+        <input type="hidden" name="id" value="{{ report.id }}"/>
+    {% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name"|t,
+        instructions: "What this report will be called in the CP."|t,
+        id: 'name',
+        name: 'name',
+        value: report.name,
+        errors: report.getErrors('name'),
+        autofocus: true,
+        required: true
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Handle"|t,
+        instructions: "How will you refer to this report in templates."|t,
+        id: 'handle',
+        name: 'handle',
+        value: report.handle,
+        errors: report.getErrors('handle'),
+        required: true
+    }) }}
+
+    {{ forms.textareaField({
+        label: "Content"|t,
+        instructions: "The twig code"|t,
+        id: 'content',
+        class: 'reports__code-editor js-reportsEditor',
+        name: 'content',
+        value: report.content,
+        errors: report.getErrors('content'),
+        rows: 20,
+        required: true
+    }) }}
+
+    {{ forms.textareaField({
+        label: "Settings"|t,
+        instructions: "The twig code for settings"|t,
+        id: 'settings',
+        class: 'reports__code-editor js-settingsEditor',
+        name: 'settings',
+        value: report.settings,
+        errors: report.getErrors('settings'),
+        rows: 20,
+        required: false
+    }) }}
+
+{% endblock %}
+
+{% if report.id is null or not report.handle %}
+    {% set nameId = 'name'|namespaceInputId|e('js') %}
+    {% set handleId = 'handle'|namespaceInputId|e('js') %}
+    {% js %}
+        new Craft.HandleGenerator('#{{ nameId }}', '#{{ handleId }}');
+    {% endjs %}
+{% endif %}
+
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}

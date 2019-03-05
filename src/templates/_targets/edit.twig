@@ -1,0 +1,69 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% set crumbs = [
+    { label: "Targets"|t, url: url('reports/targets') }
+] %}
+
+{% set fullPageForm = true %}
+{% set title = target.id ? "Edit target"|t : "Create target"|t %}
+
+{% block actionButton %}
+    {% if currentUser.can('reports-create') %}
+        <div class="buttons right">
+            {% if target.id is not null %}
+                {# <a href="{{ url("reports/export/#{target.id}") }}" class="btn">{{ "Export"|t('reports') }}</a>#}
+                <a href="{{ url("reports/run/#{target.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
+            {% endif %}
+            <input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ forms.hidden({
+        name: 'action',
+        value: 'reports/targets/save',
+    }) }}
+
+
+    {% if target.id %}
+        {{ redirectInput('reports/targets/edit/{id}') }}
+        <input type="hidden" name="id" value="{{ target.id }}"/>
+    {% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name"|t,
+        instructions: "What this target will be called in the CP."|t,
+        id: 'name',
+        name: 'name',
+        value: target.name,
+        errors: target.getErrors('name'),
+        autofocus: true,
+        required: true
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Handle"|t,
+        instructions: "How will you refer to this target in templates."|t,
+        id: 'handle',
+        name: 'handle',
+        value: target.handle,
+        errors: target.getErrors('handle'),
+        required: true
+    }) }}
+
+    {{ typeSettingsHtml }}
+{% endblock %}
+
+{% if target.id is null or not target.handle %}
+    {% set nameId = 'name'|namespaceInputId|e('js') %}
+    {% set handleId = 'handle'|namespaceInputId|e('js') %}
+    {% js %}
+        new Craft.HandleGenerator('#{{ nameId }}', '#{{ handleId }}');
+    {% endjs %}
+{% endif %}
+
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}
