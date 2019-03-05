@@ -1,0 +1,40 @@
+{
+    "name": "superbig/craft-reports",
+    "description": "Write reports with Twig.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "reports"
+    ],
+    "support": {
+        "docs": "https://github.com/superbigco/craft-reports/blob/master/README.md",
+        "issues": "https://github.com/superbigco/craft-reports/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Superbig",
+            "homepage": "https://superbig.co"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "superbig\\reports\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Reports",
+        "handle": "reports",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/superbigco/craft-reports/master/CHANGELOG.md",
+        "class": "superbig\\reports\\Reports"
+    }
+}
