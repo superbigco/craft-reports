@@ -12,8 +12,7 @@
     {% if currentUser.can('reports-create') %}
         <div class="buttons right">
             {% if target.id is not null %}
-                {# <a href="{{ url("reports/export/#{target.id}") }}" class="btn">{{ "Export"|t('reports') }}</a>#}
-                <a href="{{ url("reports/run/#{target.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
+                <a href="{{ url("reports/targets/run/#{target.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
             {% endif %}
             <input type="submit" class="btn submit" value="{{ 'Save'|t }}">
         </div>

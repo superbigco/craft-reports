@@ -49,6 +49,7 @@ class EmailTarget extends ReportTarget
         $message->setSubject($this->subject);
 
         $variables = [
+            'target'  => $target,
             'reports' => $reports,
         ];
         $body      = $view->renderString($this->body, $variables);
@@ -108,8 +109,6 @@ class EmailTarget extends ReportTarget
         $rules = parent::rules();
         $rules = array_merge($rules, [
             [['subject'], 'required'],
-            //[['apiKey'], 'default', 'value' => ''],
-            //[['apiKey'], 'string'],
         ]);
 
         return $rules;

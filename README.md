@@ -71,6 +71,24 @@ To generate a list of users that has logged in the last 30 days:
 {% endif %}
 ```
 
+### Report Target Example
+
+Report targets makes it possible to send the result of a report to target channels.
+
+For now, email is supported, with Slack and more coming soon.
+
+Example email body:
+```twig
+Report generated for {{ target.name }}<br>
+This report includes:<br><br>
+
+{% for report in reports %}
+- {{ report.name }}<br>
+{% endfor %}
+```
+
+Note that you have access to both the reports attached to the target and the target itself.
+
 ## Reports Roadmap
 
 Some things to do, and ideas for potential features:

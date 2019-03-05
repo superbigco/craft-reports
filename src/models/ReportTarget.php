@@ -42,7 +42,9 @@ class ReportTarget extends Model
             $this->targetClass = Reports::$plugin->getTarget()->getDefaultTargetType();
         }
 
-        $this->settings = Json::decodeIfJson($this->settings);
+        if (\is_string($this->settings)) {
+            $this->settings = Json::decodeIfJson($this->settings);
+        }
     }
 
     /**
