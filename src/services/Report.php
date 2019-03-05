@@ -93,7 +93,10 @@ class Report extends Component
 
         try {
             // Render template and allow data and settings to be set in Twig
-            $view->renderString($report->content, ['result' => $result]);
+            $view->renderString($report->content, [
+                'result' => $result,
+                'report' => $report,
+            ]);
             //$view->renderString($report->settings, ['result' => $result]);
         } catch (TemplateLoaderException $e) {
             $error = Craft::t(
