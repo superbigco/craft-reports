@@ -116,26 +116,6 @@ class Install extends Migration
 
         $tableSchema = Craft::$app->db->schema->getTableSchema(ReportsTargetsRecord::tableName());
         if ($tableSchema === null) {
-            $tablesCreated = true;
-            $this->createTable(
-                ReportsTargetsRecord::tableName(),
-                [
-                    'id'          => $this->primaryKey(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'siteId'      => $this->integer()->notNull(),
-                    'name'        => $this->string(255)->notNull()->defaultValue(''),
-                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
-                    'content'     => $this->text(),
-                    'settings'    => $this->text(),
-                    'dateLastRun' => $this->dateTime()->null(),
-                ]
-            );
-        }
-
-        $tableSchema = Craft::$app->db->schema->getTableSchema(ReportsTargetsRecord::tableName());
-        if ($tableSchema === null) {
             $this->createTable(
                 ReportsTargetsRecord::tableName(),
                 [
@@ -225,5 +205,7 @@ class Install extends Migration
     protected function removeTables()
     {
         $this->dropTableIfExists(ReportsRecord::tableName());
+        $this->dropTableIfExists(TargetRecord::tableName());
+        $this->dropTableIfExists(ReportsTargetsRecord::tableName());
     }
 }
