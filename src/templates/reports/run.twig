@@ -11,7 +11,7 @@
 ] %}
 
 {% set fullPageForm = true %}
-{% set title = "Report Result - #{report.name}"|t %}
+{% set title = "Report Result"|t %}
 
 {% block actionButton %}
     {% if currentUser.can('reports-create') %}
