@@ -45,8 +45,10 @@ class Export extends Component
             $csv->insertAll($result->getContent());
         }
 
+        // @todo Remove this once all plugins is using 9.0
+        $content  = method_exists($csv, 'getContent') ? $csv->getContent() : (string)$csv;
         $mimeType = 'text/csv';
-        $path     = $this->_write((string)$csv, $filename, $mimeType);
+        $path     = $this->_write($content, $filename, $mimeType);
 
         return [
             'filename' => $filename,

@@ -163,6 +163,8 @@ class Report extends Component
         try {
             $record->save(false);
             $transaction->commit();
+
+            $report->id = $record->id;
         } catch (\Exception $e) {
             $transaction->rollBack();
 

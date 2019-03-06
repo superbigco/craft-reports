@@ -107,6 +107,7 @@ Some things to do, and ideas for potential features:
 - [ ] Template helpers
 - [ ] Document helpers
 - [ ] Report sources (think Slack slash command or CraftQL)
+- [ ] Screenshots
 - [x] Permissions (Create, View, Export, Run, Delete)
 
 Brought to you by [Superbig](https://superbig.co)
