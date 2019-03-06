@@ -106,6 +106,10 @@ class Target extends Component
 
     public function getConnectedTargetsForReport(\superbig\reports\models\Report $report): array
     {
+        if (!$report->id) {
+            return [];
+        }
+
         $targetIds = (new Query())
             ->select('targetId')
             ->from(ReportsTargetsRecord::tableName())
@@ -136,6 +140,10 @@ class Target extends Component
 
     public function getConnectedReportsForTarget(\superbig\reports\models\ReportTarget $target): array
     {
+        if (!$target->id) {
+            return [];
+        }
+
         $reportIds = (new Query())
             ->select('reportId')
             ->from(ReportsTargetsRecord::tableName())
