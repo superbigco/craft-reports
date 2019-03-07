@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.4 - 2019-03-07
+
+### Added
+- Added console command for running report targets
+- Added list of connected report targets when editing a report
+
 ## 1.0.3 - 2019-03-06
 
 ### Fixed

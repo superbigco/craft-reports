@@ -66,15 +66,34 @@ class Target extends Component
 
 
     /**
-     * @param null $id
+     * @param int $id
      *
      * @return null|ReportTargetModel
      */
-    public function getReportTargetById($id = null)
+    public function getReportTargetById(int $id = null)
     {
         $query = $this
             ->_createQuery()
             ->where(['id' => $id])
+            ->one();
+
+        if (!$query) {
+            return null;
+        }
+
+        return new ReportTargetModel($query);
+    }
+
+    /**
+     * @param string $handle
+     *
+     * @return null|ReportTargetModel
+     */
+    public function getReportTargetByHandle($handle = null)
+    {
+        $query = $this
+            ->_createQuery()
+            ->where(['handle' => $handle])
             ->one();
 
         if (!$query) {

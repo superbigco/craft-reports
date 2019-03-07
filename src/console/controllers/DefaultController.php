@@ -14,7 +14,9 @@ use superbig\reports\Reports;
 
 use Craft;
 use yii\console\Controller;
+use yii\console\ExitCode;
 use yii\helpers\Console;
+use superbig\reports\records\ReportsTargetsRecord;
 
 /**
  * Default Command
@@ -29,30 +31,38 @@ class DefaultController extends Controller
     // =========================================================================
 
     /**
-     * Handle reports/default console commands
+     * Run a report target by handle/id
+     *
+     * @param $id
      *
      * @return mixed
+     * @throws \yii\base\Exception
      */
-    public function actionIndex()
+    public function actionRunTarget($id)
     {
-        $result = 'something';
+        if (\intval($id)) {
+            $target = Reports::$plugin->getTarget()->getReportTargetById($id);
+        }
+        else {
+            $target = Reports::$plugin->getTarget()->getReportTargetByHandle($id);
+        }
 
-        echo "Welcome to the console DefaultController actionIndex() method\n";
+        if (!$target) {
+            return ExitCode::NOINPUT;
+        }
 
-        return $result;
-    }
+        $result = Reports::$plugin->getTarget()->runReportTarget($target->id);
 
-    /**
-     * Handle reports/default/do-something console commands
-     *
-     * @return mixed
-     */
-    public function actionDoSomething()
-    {
-        $result = 'something';
+        if (!$result) {
+            $error = 'Failed to run ' . $target->name . PHP_EOL;
+            Console::stdout($this->ansiFormat($error, Console::FG_RED));
 
-        echo "Welcome to the console DefaultController actionDoSomething() method\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
 
-        return $result;
+        $notice = 'Successfully ran ' . $target->name;
+        Console::stdout($this->ansiFormat($notice, Console::FG_GREEN));
+
+        return ExitCode::OK;
     }
 }

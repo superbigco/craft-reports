@@ -89,6 +89,18 @@ This report includes:<br><br>
 
 Note that you have access to both the reports attached to the target and the target itself.
 
+## Running report targets through Craft's console command
+
+You can run any report targets through the console with the following command
+
+```
+./craft reports/default/run-target targetHandle
+``` 
+
+The command can also receive the target's ID.
+
+This way of running report targets is particularly useful if you want to run it from a cron job, or you have bigger reports that require more memory or runs longer than a normal web request can handle. 
+
 ## Reports Roadmap
 
 Some things to do, and ideas for potential features:
@@ -107,7 +119,8 @@ Some things to do, and ideas for potential features:
 - [ ] Template helpers
 - [ ] Document helpers
 - [ ] Report sources (think Slack slash command or CraftQL)
-- [ ] Run reports via cli
+- [x] Run report targets via cli
+- [ ] Report targets dropdown in Reports index
 - [x] Screenshots
 - [x] Permissions (Create, View, Export, Run, Delete)
 
