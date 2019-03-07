@@ -88,6 +88,27 @@
         required: false
     }) }}
 
+    {% if connectedTargets|length %}
+        <h2>Connected Report Targets</h2>
+
+        <table class="data fullwidth" style="margin-bottom: 40px;">
+            <thead>
+                <th scope="col">{{ "Name"|t }}</th>
+                <th scope="col">{{ "Handle"|t }}</th>
+            </thead>
+            <tbody>
+            {% for target in connectedTargets %}
+                <tr data-id="{{ target.id }}" data-name="{{ report.name|t }}">
+                    <th scope="row" data-title="{{ 'Name'|t }}">
+                        <a href="{{ url('reports/targets/edit/' ~ report.id) }}">{{ report.name|t }}</a>
+                    </th>
+                    <td data-title="{{ 'Handle'|t }}"><code>{{ report.handle }}</code></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
 {% endblock %}
 
 {% if report.id is null or not report.handle %}
