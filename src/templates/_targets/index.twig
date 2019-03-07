@@ -20,7 +20,7 @@
 {% do view.registerAssetBundle("superbig\\reports\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
 
 {% set title = "Report Targets" %}
-{% set navItem = 'targets' %}
+{% set selectedSubnavItem = 'targets' %}
 
 {% block actionButton %}
     {% if currentUser.can('reports-create') %}
