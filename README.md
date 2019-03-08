@@ -121,6 +121,7 @@ Some things to do, and ideas for potential features:
 - [ ] Report sources (think Slack slash command or CraftQL)
 - [x] Run report targets via cli
 - [ ] Report targets dropdown in Reports index
+- [ ] Override title
 - [x] Screenshots
 - [x] Permissions (Create, View, Export, Run, Delete)
 
