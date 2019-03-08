@@ -13,6 +13,7 @@ namespace superbig\reports\controllers;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use superbig\reports\jobs\ExportJob;
 use superbig\reports\models\Report;
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
@@ -113,6 +114,26 @@ class TargetsController extends Controller
         Craft::$app->getSession()->setNotice($notice);
 
         return $this->goBack(UrlHelper::cpUrl('reports/targets'));
+    }
+
+    /**
+     * @param int|null $id
+     *
+     * @return \yii\web\Response
+     * @throws \craft\errors\MissingComponentException
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
+    public function actionQueueRun()
+    {
+        $id  = Craft::$app->getRequest()->getRequiredParam('id');
+        $job = new ExportJob([
+            'targetId' => $id,
+        ]);
+
+        return $this->asJson([
+            'success' => (bool)Craft::$app->getQueue()->push($job),
+        ]);
     }
 
     public function actionSave()

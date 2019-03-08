@@ -51,7 +51,7 @@
                         <a href="{{ url('reports/targets/edit/' ~ target.id) }}">{{ target.name|t }}</a>
                     </th>
                     <td data-title="{{ 'Handle'|t }}"><code>{{ target.handle }}</code></td>
-                    <td class="thin"><a class="icon run" title="{{ 'Run'|t }}" href="{{ url('reports/targets/run/' ~ target.id) }}">Run</a></td>
+                    <td class="thin"><button type="button" class="icon btn small run js-queueTargetExport" title="{{ 'Export'|t }}" data-target-id="{{ target.id }}">Export</button></td>
                     <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
                 </tr>
             {% endfor %}

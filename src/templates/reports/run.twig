@@ -27,7 +27,7 @@
                             <ul>
                                 {% for target in connectedTargets %}
                                     <li>
-                                        <a href="{{ url('reports/targets/run/'~target.id) }}" data-target-id="{{ target.id }}">
+                                        <a href="{{ url('reports/targets/run/'~target.id) }}" class="js-queueTargetExport" data-target-id="{{ target.id }}">
                                             {{ target.name }}
                                         </a>
                                     </li>
@@ -85,4 +85,4 @@
     {% endif %}
 {% endblock %}
 
-{#{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}#}
+{% do view.registerAssetBundle("superbig\\reports\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}

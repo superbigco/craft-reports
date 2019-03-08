@@ -10,25 +10,22 @@
 
 namespace superbig\reports\jobs;
 
+use craft\helpers\App;
 use superbig\reports\Reports;
 
 use Craft;
 use craft\queue\BaseJob;
+use yii\base\Exception;
 
 /**
  * @author    Superbig
  * @package   Reports
  * @since     1.0.0
  */
-class ReportsTask extends BaseJob
+class ExportJob extends BaseJob
 {
     // Public Properties
     // =========================================================================
-
-    /**
-     * @var int The report to handle
-     */
-    public $reportId;
 
     /**
      * @var int The target
@@ -43,7 +40,20 @@ class ReportsTask extends BaseJob
      */
     public function execute($queue)
     {
-        // @todo Execute target
+        App::maxPowerCaptain();
+
+        $updateProgress = function($step) use ($queue) {
+            $this->setProgress($queue, $step);
+        };
+
+        $target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
+        $result = Reports::$plugin->getTarget()->runReportTarget($this->targetId);
+
+        if (!$result) {
+            throw new Exception('Failed to run export target');
+        }
+
+        return true;
     }
 
     // Protected Methods
@@ -54,6 +64,6 @@ class ReportsTask extends BaseJob
      */
     protected function defaultDescription(): string
     {
-        return Craft::t('reports', 'Reports Export');
+        return Craft::t('reports', 'Reports Target');
     }
 }
