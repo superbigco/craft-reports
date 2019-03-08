@@ -10,11 +10,13 @@
 
 namespace superbig\reports\console\controllers;
 
+use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
 
 use Craft;
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\console\widgets\Table;
 use yii\helpers\Console;
 use superbig\reports\records\ReportsTargetsRecord;
 
@@ -62,6 +64,32 @@ class DefaultController extends Controller
 
         $notice = 'Successfully ran ' . $target->name;
         Console::stdout($this->ansiFormat($notice, Console::FG_GREEN));
+
+        return ExitCode::OK;
+    }
+
+    /**
+     * List report targets
+     *
+     * @return int
+     */
+    public function actionListTargets()
+    {
+        $targets = Reports::$plugin->getTarget()->getAllReportTargets();
+        $table   = (new Table())
+            ->setHeaders(['Name', 'Handle', 'ID', 'Connected reports'])
+            ->setRows(array_map(function(ReportTarget $target) {
+                $reportCount = count(Reports::$plugin->getTarget()->getConnectedReportsForTarget($target));
+
+                return [
+                    $target->name,
+                    $target->handle,
+                    $target->id,
+                    $reportCount,
+                ];
+            }, $targets));
+
+        echo $table->run();
 
         return ExitCode::OK;
     }
