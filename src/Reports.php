@@ -75,6 +75,8 @@ class Reports extends Plugin
      */
     public $schemaVersion = '1.0.2';
 
+    public $hasCpSettings = false;
+
     // Public Methods
     // =========================================================================
 
