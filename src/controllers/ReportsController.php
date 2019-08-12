@@ -90,8 +90,9 @@ class ReportsController extends Controller
      */
     public function actionRun(int $id = null)
     {
+        /** @var Report $report */
         $report = Reports::$plugin->getReport()->getReportById($id);
-        $result = Reports::$plugin->getReport()->runReport($id);
+        $result = $report->run();
 
         return $this->renderTemplate('reports/reports/run', [
             'report'           => $report,
@@ -100,8 +101,16 @@ class ReportsController extends Controller
         ]);
     }
 
+    /**
+     * @param int|null $id
+     *
+     * @return \craft\web\Response|\yii\console\Response
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
     public function actionExport(int $id = null)
     {
+        /** @var Report $report */
         $report = Reports::$plugin->getReport()->getReportById($id);
         $info   = Reports::$plugin->getExport()->csv($report);
 

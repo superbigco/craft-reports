@@ -35,7 +35,7 @@ class Report extends Component
     /**
      * @param null $id
      *
-     * @return null|ReportModel
+     * @return ReportModel|null
      */
     public function getReportById($id = null)
     {
@@ -72,23 +72,23 @@ class Report extends Component
     }
 
     /**
-     * @param null $id
+     * @param Report $report
      *
-     * @return array
+     * @return ReportResult
      * @throws Exception
      * @throws \yii\base\Exception
      */
-    public function runReport($id = null): ReportResult
+    public function runReport(ReportModel $report): ReportResult
     {
-        $report              = $this->getReportById($id);
         $report->dateLastRun = new \DateTime();
 
         // @todo try/catch and return error
         $this->saveReport($report);
-        $result = new ReportResult();
 
+        $result          = new ReportResult();
         $view            = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
+
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
 
         try {

@@ -45,4 +45,14 @@ class Report extends Model
             [['content', 'settings'], 'string'],
         ];
     }
+
+    /**
+     * @return ReportResult
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
+    public function run()
+    {
+        return Reports::$plugin->getReport()->runReport($this);
+    }
 }

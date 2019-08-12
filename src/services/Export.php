@@ -29,10 +29,17 @@ class Export extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param \superbig\reports\models\Report $report
+     *
+     * @return array
+     * @throws Exception
+     * @throws \yii\db\Exception
+     */
     public function csv(\superbig\reports\models\Report $report)
     {
         // @todo Check if successful
-        $result   = Reports::$plugin->getReport()->runReport($report);
+        $result   = $report->run();
         $filename = $result->getFilename() . '-' . date('YmdHis') . '.csv';
         $csv      = Writer::createFromString('');
 
