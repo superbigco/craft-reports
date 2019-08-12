@@ -122,6 +122,7 @@ Some things to do, and ideas for potential features:
 - [x] Run report targets via cli
 - [ ] Report targets dropdown in Reports index
 - [x] Override title
+- [x] Use queue job when running report targets
 - [x] Screenshots
 - [x] Permissions (Create, View, Export, Run, Delete)
 
