@@ -11,6 +11,7 @@
 namespace superbig\reports\jobs;
 
 use craft\helpers\App;
+use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
 
 use Craft;
@@ -28,9 +29,14 @@ class ExportJob extends BaseJob
     // =========================================================================
 
     /**
-     * @var int The target
+     * @var int The target ID
      */
     public $targetId;
+
+    /**
+     * @var ReportTarget The target
+     */
+    private $_target;
 
     // Public Methods
     // =========================================================================
@@ -64,6 +70,20 @@ class ExportJob extends BaseJob
      */
     protected function defaultDescription(): string
     {
-        return Craft::t('reports', 'Reports Target');
+        $targetName = $this->getTarget() ? $this->getTarget()->name : 'Reports Target';
+
+        return Craft::t('reports', $targetName);
+    }
+
+    /**
+     * @return ReportTarget|null
+     */
+    public function getTarget()
+    {
+        if (!$this->_target) {
+            $this->_target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
+        }
+
+        return $this->_target;
     }
 }
