@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.0.5 - 2019-03-08
+## 1.0.5 - 2019-08-12
 
 ### Added
 - Added console command for listing report targets
@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 - Fixed highlight of subnav link
+- Fixed running when having multiple reports
+- Fixed non-existing plugin settings link
 
 ## 1.0.4 - 2019-03-07
 
