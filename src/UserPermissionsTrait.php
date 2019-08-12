@@ -43,6 +43,7 @@ trait UserPermissionsTrait
     public function getCpNavItem()
     {
         $navItem = parent::getCpNavItem();
+        $navItem['label'] = $this->getPluginName();
         $subNav = [];
 
         /** @var User $currentUser */

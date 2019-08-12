@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - Added console command for listing report targets
+- Added plugin settings
+- Added plugin title override
 
 ### Changed
 - Report targets is now handled via queue jobs
@@ -15,7 +17,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 - Fixed highlight of subnav link
 - Fixed running when having multiple reports
-- Fixed non-existing plugin settings link
 
 ## 1.0.4 - 2019-03-07
 

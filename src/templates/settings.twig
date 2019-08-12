@@ -18,9 +18,10 @@
 {% do view.registerAssetBundle("superbig\\reports\\assetbundles\\reports\\ReportsAsset") %}
 
 {{ forms.textField({
-    label: 'Some Field',
-    instructions: 'Enter some setting here.',
-    id: 'someAttribute',
-    name: 'someAttribute',
-    value: settings['someAttribute']})
-}}
+    label: 'Plugin Name'|t('reports'),
+    id: 'pluginName',
+    name: 'pluginName',
+    value: settings['pluginName'],
+    first: true,
+    autofocus: true,
+}) }}

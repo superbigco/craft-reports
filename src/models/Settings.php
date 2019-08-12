@@ -27,6 +27,7 @@ class Settings extends Model
 
     public $enableScheduler = true;
     public $helpers         = [];
+    public $pluginName      = 'Reports';
 
     // Public Methods
     // =========================================================================

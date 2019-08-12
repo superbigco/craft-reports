@@ -45,6 +45,8 @@ use yii\base\Event;
  * @property  ChartService  $chart
  * @property  WidgetService $widget
  * @property  Target        $target
+ *
+ * @method Settings getSettings()
  */
 class Reports extends Plugin
 {
@@ -70,15 +72,17 @@ class Reports extends Plugin
     // Public Properties
     // =========================================================================
 
-    /**
-     * @var string
-     */
     public $schemaVersion = '1.0.2';
-
-    public $hasCpSettings = false;
+    public $hasCpSettings = true;
+    public $hasCpSection  = true;
 
     // Public Methods
     // =========================================================================
+
+    public function getPluginName()
+    {
+        return Craft::t('reports', $this->getSettings()->pluginName);
+    }
 
     /**
      * @inheritdoc
