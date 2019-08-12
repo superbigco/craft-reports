@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added plugin settings
 - Added plugin title override
 
+## Changed
+- Changed queue job to use target name instead of generic title
+
 ### Fixed
 - Fixed running when having multiple reports
 
