@@ -32,7 +32,7 @@ class Export extends Component
     public function csv(\superbig\reports\models\Report $report)
     {
         // @todo Check if successful
-        $result   = Reports::$plugin->getReport()->runReport($report);
+        $result   = Reports::$plugin->getReport()->runReport($report->id);
         $filename = $result->getFilename() . '-' . date('YmdHis') . '.csv';
         $csv      = Writer::createFromString('');
 
