@@ -7,17 +7,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 1.0.6 - 2019-08-12
 
 ### Added
-- Added console command for listing report targets
 - Added plugin settings
 - Added plugin title override
-
-### Changed
-- Report targets is now handled via queue jobs
 
 ### Fixed
 - Fixed running when having multiple reports
 
-## 1.0.5 - 2019-08-12
+## 1.0.5 - 2019-03-08
+
+### Added
+- Added console command for listing report targets
+
+### Changed
+- Report targets is now handled via queue jobs
 
 ### Fixed
 - Fixed highlight of subnav link
