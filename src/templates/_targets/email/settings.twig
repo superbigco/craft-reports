@@ -1,6 +1,6 @@
 {% import "_includes/forms" as forms %}
 
-{{ forms.textField({
+{{ forms.autosuggestField({
     first: true,
     label: "Subject"|t,
     instructions: "What this target will be called in the CP."|t,
@@ -9,6 +9,7 @@
     value: targetType.subject,
     errors: targetType.getErrors('subject'),
     required: true,
+    suggestEnvVars: true,
 }) }}
 
 {{ forms.editableTableField({

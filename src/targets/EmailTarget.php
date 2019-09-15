@@ -46,7 +46,7 @@ class EmailTarget extends ReportTarget
         $message = new Message();
         $message->setTo($this->_getEmails());
         $message->setFrom(\craft\helpers\App::mailSettings()->fromEmail);
-        $message->setSubject($this->subject);
+        $message->setSubject($this->_getSubject($target));
 
         $variables = [
             'target'  => $target,
@@ -119,6 +119,14 @@ class EmailTarget extends ReportTarget
         return array_map(function($row) {
             return $row['email'];
         }, $this->emails);
+    }
+
+    private function _getSubject(\superbig\reports\models\ReportTarget $target)
+    {
+        $subject = Craft::parseEnv($this->subject);
+        $subject = Craft::$app->getView()->renderObjectTemplate($subject, $target);
+
+        return $subject;
     }
 
 }
