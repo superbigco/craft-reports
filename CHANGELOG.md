@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+### Added
+- Added export targets dropdown in reports index
+
 ### Fixed
 - Fixed parsing of Twig code in subject of email targets
 

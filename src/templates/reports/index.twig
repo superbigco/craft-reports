@@ -41,17 +41,34 @@
             <th scope="col">{{ "Name"|t }}</th>
             <th scope="col">{{ "Handle"|t }}</th>
             <td class="thin"></td>
-            <td class="thin"></td>
+            <td class="col"></td>
             <td class="thin"></td>
             </thead>
             <tbody>
             {% for report in reports %}
+                {% set connectedTargets = report.getConnectedTargets() %}
                 <tr data-id="{{ report.id }}" data-name="{{ report.name|t }}">
                     <th scope="row" data-title="{{ 'Name'|t }}"><a href="{{ url('reports/edit/' ~ report.id) }}">{{ report.name|t }}</a>
                     </th>
                     <td data-title="{{ 'Handle'|t }}"><code>{{ report.handle }}</code></td>
                     <td class="thin"><a class="icon run" title="{{ 'Run'|t }}" href="{{ url('reports/run/' ~ report.id) }}">Run</a></td>
-                    <td class="thin"><a class="icon export" title="{{ 'Export'|t }}" href="{{ url('reports/export/' ~ report.id) }}">Export</a></td>
+                    <td data-title="Export Targets">
+                        <a class="icon export" title="{{ 'Export CSV'|t }}" href="{{ url('reports/export/' ~ report.id) }}">Export</a>
+                        {% if connectedTargets|length %}
+                            <a class="menubtn" title="Export Targets"></a>
+                            <div class="menu">
+                                <ul>
+                                    {% for target in connectedTargets  %}
+                                        <li>
+                                            <a href="{{ url('reports/targets/run/'~target.id) }}" class="js-queueTargetExport" data-target-id="{{ target.id }}">
+                                                {{ target.name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </td>
                     <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
                 </tr>
             {% endfor %}

@@ -120,7 +120,7 @@ Some things to do, and ideas for potential features:
 - [ ] Document helpers
 - [ ] Report sources (think Slack slash command or CraftQL)
 - [x] Run report targets via cli
-- [ ] Report targets dropdown in Reports index
+- [x] Report targets dropdown in Reports index
 - [x] Override title
 - [x] Use queue job when running report targets
 - [x] Screenshots

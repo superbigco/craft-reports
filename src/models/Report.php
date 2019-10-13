@@ -25,13 +25,14 @@ class Report extends Model
     // Public Properties
     // =========================================================================
 
-    public $id;
-    public $siteId;
-    public $name;
-    public $handle;
-    public $content;
-    public $settings;
-    public $dateLastRun;
+    public  $id;
+    public  $siteId;
+    public  $name;
+    public  $handle;
+    public  $content;
+    public  $settings;
+    public  $dateLastRun;
+    private $_targets;
 
     // Public Methods
     // =========================================================================
@@ -54,5 +55,14 @@ class Report extends Model
     public function run()
     {
         return Reports::$plugin->getReport()->runReport($this);
+    }
+
+    public function getConnectedTargets()
+    {
+        if (!$this->_targets) {
+            $this->_targets = Reports::$plugin->getTarget()->getConnectedTargetsForReport($this);
+        }
+
+        return $this->_targets;
     }
 }
