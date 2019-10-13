@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.0.7 - 2019-10-13
 
 > {warning} The permissions has been changed, so existing users/user groups with limited permissions need to be reset to the new permissions.
 
