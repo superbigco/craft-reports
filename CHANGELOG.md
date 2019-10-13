@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+> {warning} The permissions has been changed, so existing users/user groups with limited permissions need to be reset to the new permissions.
+
 ### Added
 - Added export targets dropdown in reports index
 
