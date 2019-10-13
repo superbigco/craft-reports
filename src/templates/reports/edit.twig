@@ -1,11 +1,3 @@
-{% if report.id is not null and not currentUser.can('reports-edit') %}
-    {% redirect 'reports' %}
-{% endif %}
-
-{% if report.id == null and not currentUser.can('reports-create') %}
-    {% redirect 'reports' %}
-{% endif %}
-
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
@@ -17,15 +9,13 @@
 {% set title = report.id ? "Edit report"|t : "Create report"|t %}
 
 {% block actionButton %}
-    {% if currentUser.can('reports-create') %}
-        <div class="buttons right">
-            {% if report.id is not null %}
-                {# <a href="{{ url("reports/export/#{report.id}") }}" class="btn">{{ "Export"|t('reports') }}</a>#}
-                <a href="{{ url("reports/run/#{report.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
-            {% endif %}
-            <input type="submit" class="btn submit" value="{{ 'Save'|t }}">
-        </div>
-    {% endif %}
+    <div class="buttons right">
+        {% if report.id is not null %}
+            {# <a href="{{ url("reports/export/#{report.id}") }}" class="btn">{{ "Export"|t('reports') }}</a>#}
+            <a href="{{ url("reports/run/#{report.id}") }}" class="btn">{{ "Run"|t('reports') }}</a>
+        {% endif %}
+        <input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+    </div>
 {% endblock %}
 
 {% block content %}

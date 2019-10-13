@@ -65,4 +65,9 @@ class Report extends Model
 
         return $this->_targets;
     }
+
+    public function canManage()
+    {
+        return Craft::$app->getUser()->checkPermission(Reports::PERMISSION_MANAGE_REPORTS);
+    }
 }

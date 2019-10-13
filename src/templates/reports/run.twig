@@ -1,7 +1,3 @@
-{% if report.id is not null and not currentUser.can('reports-run') %}
-    {% redirect 'reports' %}
-{% endif %}
-
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
@@ -12,9 +8,10 @@
 
 {% set fullPageForm = true %}
 {% set title = "Report Result"|t %}
+{% set canManageReports = currentUser.can('reports:manageReports') %}
 
 {% block actionButton %}
-    {% if currentUser.can('reports-create') %}
+    {% if canManageReports %}
         <div class="buttons right">
             {% if report.id is not null %}
                 <a href="{{ url("reports/edit/#{report.id}") }}" class="btn ">{{ "Edit"|t('reports') }}</a>

@@ -56,13 +56,9 @@ class Reports extends Plugin
     // Static Properties
     // =========================================================================
 
-    const PERMISSION_ACCESS  = 'reports:access';
-    const PERMISSION_CREATE  = 'reports:create';
-    const PERMISSION_EXPORT  = 'reports:export';
-    const PERMISSION_EDIT    = 'reports:edit';
-    const PERMISSION_RUN     = 'reports:run';
-    const PERMISSION_DELETE  = 'reports:delete';
-    const PERMISSION_TARGETS = 'reports:targets';
+    const PERMISSION_RUN_REPORTS    = 'reports:runReports';
+    const PERMISSION_MANAGE_REPORTS = 'reports:manageReports';
+    const PERMISSION_MANAGE_TARGETS = 'reports:manageExportTargets';
 
     /**
      * @var Reports

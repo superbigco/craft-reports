@@ -15,6 +15,7 @@ use superbig\reports\Reports;
 
 use Craft;
 use craft\web\Controller;
+use yii\web\ForbiddenHttpException;
 
 /**
  * @author    Superbig
@@ -37,15 +38,24 @@ class ReportsController extends Controller
     public function beforeAction($action)
     {
         $permissions = [
-            'index'  => Reports::PERMISSION_ACCESS,
-            'run'    => Reports::PERMISSION_RUN,
-            'create' => Reports::PERMISSION_CREATE,
-            'edit'   => Reports::PERMISSION_EDIT,
-            'delete' => Reports::PERMISSION_DELETE,
+            'index'  => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'run'    => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'create' => [Reports::PERMISSION_MANAGE_REPORTS],
+            'edit'   => [Reports::PERMISSION_MANAGE_REPORTS],
+            'delete' => [Reports::PERMISSION_MANAGE_REPORTS],
         ];
 
         if (isset($permissions[ $action->id ])) {
-            $this->requirePermission($permissions[ $action->id ]);
+            $users     = Craft::$app->getUser();
+            $checks    = array_map(function($permission) use ($users) {
+                return $users->checkPermission($permission);
+            }, $permissions[ $action->id ]);
+            $canAccess = \in_array(true, $checks);
+
+
+            if (!$canAccess) {
+                throw new ForbiddenHttpException('User is not permitted to perform this action');
+            }
         }
 
         return parent::beforeAction($action);
@@ -67,7 +77,7 @@ class ReportsController extends Controller
 
         $this->renderTemplate('reports/reports/edit', [
             'report'           => $report,
-            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
+            'connectedTargets' => $report->getConnectedTargets(),
         ]);
     }
 
@@ -77,7 +87,7 @@ class ReportsController extends Controller
 
         return $this->renderTemplate('reports/reports/edit', [
             'report'           => $report,
-            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
+            'connectedTargets' => $report->getConnectedTargets(),
         ]);
     }
 
@@ -97,7 +107,7 @@ class ReportsController extends Controller
         return $this->renderTemplate('reports/reports/run', [
             'report'           => $report,
             'result'           => $result,
-            'connectedTargets' => Reports::$plugin->getTarget()->getConnectedTargetsForReport($report),
+            'connectedTargets' => $report->getConnectedTargets(),
         ]);
     }
 

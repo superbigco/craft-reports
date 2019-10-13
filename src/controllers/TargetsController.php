@@ -21,6 +21,7 @@ use superbig\reports\Reports;
 use Craft;
 use craft\web\Controller;
 use superbig\reports\targets\ReportTargetInterface;
+use yii\web\ForbiddenHttpException;
 
 /**
  * @author    Superbig
@@ -42,15 +43,29 @@ class TargetsController extends Controller
     public function beforeAction($action)
     {
         $permissions = [
-            'index'  => Reports::PERMISSION_ACCESS,
-            'run'    => Reports::PERMISSION_RUN,
-            'create' => Reports::PERMISSION_CREATE,
-            'edit'   => Reports::PERMISSION_EDIT,
-            'delete' => Reports::PERMISSION_DELETE,
+            // Allow users that can run reports to also run export targets
+            'queue-run' => [Reports::PERMISSION_RUN_REPORTS, Reports::PERMISSION_MANAGE_REPORTS],
+            'run'       => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+
+            'index'     => [Reports::PERMISSION_MANAGE_TARGETS],
+            'new'       => [Reports::PERMISSION_MANAGE_TARGETS],
+            'create'    => [Reports::PERMISSION_MANAGE_TARGETS],
+            'save'      => [Reports::PERMISSION_MANAGE_TARGETS],
+            'edit'      => [Reports::PERMISSION_MANAGE_TARGETS],
+            'delete'    => [Reports::PERMISSION_MANAGE_TARGETS],
         ];
 
         if (isset($permissions[ $action->id ])) {
-            $this->requirePermission($permissions[ $action->id ]);
+            $users     = Craft::$app->getUser();
+            $checks    = array_map(function($permission) use ($users) {
+                return $users->checkPermission($permission);
+            }, $permissions[ $action->id ]);
+            $canAccess = \in_array(true, $checks);
+
+
+            if (!$canAccess) {
+                throw new ForbiddenHttpException('User is not permitted to perform this action');
+            }
         }
 
         return parent::beforeAction($action);

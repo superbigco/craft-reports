@@ -21,9 +21,10 @@
 
 {% set title = "Reports" %}
 {% set selectedSubnavItem = 'reports' %}
+{% set canManageReports = currentUser.can('reports:manageReports') %}
 
 {% block actionButton %}
-    {% if currentUser.can('reports-create') %}
+    {% if canManageReports %}
         <div class="buttons right">
             <a href="{{ url('reports/new') }}" class="submit btn add icon">{{ "New report"|t }}</a>
         </div>
@@ -38,17 +39,24 @@
     {% if reports %}
         <table id="js-reports" class="data fullwidth collapsible">
             <thead>
-            <th scope="col">{{ "Name"|t }}</th>
-            <th scope="col">{{ "Handle"|t }}</th>
-            <td class="thin"></td>
-            <td class="col"></td>
-            <td class="thin"></td>
+                <th scope="col">{{ "Name"|t }}</th>
+                <th scope="col">{{ "Handle"|t }}</th>
+                <td class="col"></td>
+                <td scope="col"></td>
+                {% if canManageReports %}
+                    <td class="thin"></td>
+                {% endif %}
             </thead>
             <tbody>
             {% for report in reports %}
                 {% set connectedTargets = report.getConnectedTargets() %}
                 <tr data-id="{{ report.id }}" data-name="{{ report.name|t }}">
-                    <th scope="row" data-title="{{ 'Name'|t }}"><a href="{{ url('reports/edit/' ~ report.id) }}">{{ report.name|t }}</a>
+                    <th scope="row" data-title="{{ 'Name'|t }}">
+                        {% if canManageReports %}
+                            <a href="{{ url('reports/edit/' ~ report.id) }}">{{ report.name|t }}</a>
+                        {% else %}
+                            {{ report.name|t }}
+                        {% endif %}
                     </th>
                     <td data-title="{{ 'Handle'|t }}"><code>{{ report.handle }}</code></td>
                     <td class="thin"><a class="icon run" title="{{ 'Run'|t }}" href="{{ url('reports/run/' ~ report.id) }}">Run</a></td>
@@ -69,7 +77,9 @@
                             </div>
                         {% endif %}
                     </td>
-                    <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                    {% if canManageReports %}
+                        <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

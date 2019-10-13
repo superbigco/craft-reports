@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 - Fixed parsing of Twig code in subject of email targets
+- Fixed faulty logic in user permissions that caused issues when users had some but not other permissions ([#3](https://github.com/superbigco/craft-reports/issues/3))
 
 ## 1.0.6 - 2019-08-12
 
