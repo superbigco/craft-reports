@@ -204,7 +204,7 @@ class TargetsController extends Controller
      */
     private function _editView(ReportTarget $target)
     {
-        // Get the image transform types
+        // Get the target types
         $allTargetTypes     = Reports::$plugin->getTarget()->getTargetTypes();
         $selectedDefinition = array_merge(
             $target->settings[ $target->targetClass ] ?? [],
