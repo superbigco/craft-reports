@@ -1,14 +1,14 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
+{% set canManageReports = currentUser.can('reports:manageReports') %}
 {% set crumbs = [
     { label: "Reports"|t, url: url('reports') },
-    { label: "#{report.name}"|t, url: url("reports/edit/#{report.id}") },
+    { label: "#{report.name}"|t, url: canManageReports ? url("reports/edit/#{report.id}") : craft.app.request.getAbsoluteUrl() },
 ] %}
 
 {% set fullPageForm = true %}
 {% set title = "Report Result"|t %}
-{% set canManageReports = currentUser.can('reports:manageReports') %}
 
 {% block actionButton %}
     {% if canManageReports %}
