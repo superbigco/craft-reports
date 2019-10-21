@@ -10,12 +10,14 @@
 
 namespace superbig\reports\controllers;
 
+use superbig\reports\assetbundles\result\ResultAsset;
 use superbig\reports\models\Report;
 use superbig\reports\Reports;
 
 use Craft;
 use craft\web\Controller;
 use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 
 /**
  * @author    Superbig
@@ -100,15 +102,32 @@ class ReportsController extends Controller
      */
     public function actionRun(int $id = null)
     {
+        $request  = Craft::$app->getRequest();
+        $reportId = $id ?? $request->getParam('id');
+
+        Craft::$app->getView()->registerAssetBundle(ResultAsset::class);
+
         /** @var Report $report */
-        $report = Reports::$plugin->getReport()->getReportById($id);
+        $report = Reports::$plugin->getReport()->getReportById($reportId);
+
+        if (!$report) {
+            throw new NotFoundHttpException();
+        }
+
         $result = $report->run();
 
-        return $this->renderTemplate('reports/reports/run', [
+        $result = $this->renderTemplate('reports/reports/run', [
             'report'           => $report,
             'result'           => $result,
+            'hasFields'        => false,
             'connectedTargets' => $report->getConnectedTargets(),
         ]);
+
+        if ($request->getAcceptsJson()) {
+            return $result;
+        }
+
+        return $result;
     }
 
     /**
