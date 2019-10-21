@@ -31,6 +31,7 @@ class Report extends Model
     public  $handle;
     public  $content;
     public  $settings;
+    public  $fieldValues;
     public  $dateLastRun;
     private $_targets;
 
@@ -55,6 +56,11 @@ class Report extends Model
     public function run()
     {
         return Reports::$plugin->getReport()->runReport($this);
+    }
+
+    public function reportSettings()
+    {
+        return Reports::$plugin->getReport()->settingsForReport($this);
     }
 
     public function getConnectedTargets()

@@ -89,8 +89,9 @@ class Install extends Migration
                     'siteId'      => $this->integer()->notNull(),
                     'name'        => $this->string(255)->notNull()->defaultValue(''),
                     'handle'      => $this->string(255)->notNull()->defaultValue(''),
-                    'content'     => $this->text(),
-                    'settings'    => $this->text(),
+                    'content'     => $this->longText(),
+                    'settings'    => $this->longText(),
+                    'fieldValues' => $this->longText(),
                     'dateLastRun' => $this->dateTime()->null(),
                 ]
             );

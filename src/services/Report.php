@@ -14,6 +14,7 @@ use craft\db\Query;
 use craft\web\twig\TemplateLoaderException;
 use superbig\reports\models\Report as ReportModel;
 use superbig\reports\models\ReportResult;
+use superbig\reports\models\ReportSettings;
 use superbig\reports\records\ReportsRecord;
 
 use Craft;
@@ -200,5 +201,36 @@ class Report extends Component
                 'settings',
                 'dateLastRun',
             ]);
+    }
+
+    public function settingsForReport(ReportModel $report)
+    {
+        $view            = Craft::$app->getView();
+        $oldTemplateMode = $view->getTemplateMode();
+        $reportSettings  = new ReportSettings();
+
+        $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
+
+        try {
+            // Render template and allow data and settings to be set in Twig
+            $view->renderString($report->settings, [
+                'settings' => $reportSettings,
+                'report'   => $report,
+            ]);
+            //$view->renderString($report->settings, ['result' => $result]);
+        } catch (\Exception $e) {
+            $error = Craft::t(
+                'reports',
+                'Setting Template Error: {error}',
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
+            $report->addError('settings', $error);
+        }
+
+        $view->setTemplateMode($oldTemplateMode);
+
+        return $reportSettings;
     }
 }

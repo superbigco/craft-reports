@@ -9,6 +9,9 @@
 
 {% set fullPageForm = true %}
 {% set title = "Report Result"|t %}
+{% set hasFields = report.reportSettings.hasFields() %}
+{% set fields = report.reportSettings.fields %}
+{% set hasDateFields = true %}
 
 {% block actionButton %}
     {% if canManageReports %}
@@ -17,14 +20,16 @@
                 <a href="{{ url("reports/edit/#{report.id}") }}" class="btn ">{{ "Edit"|t('reports') }}</a>
                 {% if connectedTargets|length %}
                     <div class="btngroup">
-                        <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+                        <a href="{{ url("reports/export/#{report.id}") }}"
+                           class="btn submit">{{ "Export"|t('reports') }}</a>
 
                         <div class="btn submit menubtn"></div>
                         <div class="menu">
                             <ul>
                                 {% for target in connectedTargets %}
                                     <li>
-                                        <a href="{{ url('reports/targets/run/'~target.id) }}" class="js-queueTargetExport" data-target-id="{{ target.id }}">
+                                        <a href="{{ url('reports/targets/run/'~target.id) }}"
+                                           class="js-queueTargetExport" data-target-id="{{ target.id }}">
                                             {{ target.name }}
                                         </a>
                                     </li>
@@ -34,12 +39,28 @@
                         </div>
                     </div>
                 {% else %}
-                    <a href="{{ url("reports/export/#{report.id}") }}" class="btn submit">{{ "Export"|t('reports') }}</a>
+                    <a href="{{ url("reports/export/#{report.id}") }}"
+                       class="btn submit">{{ "Export"|t('reports') }}</a>
                 {% endif %}
             {% endif %}
         </div>
     {% endif %}
 {% endblock %}
+
+{% block details %}
+    {% set settingsError = report.getError('settings') %}
+    {% if hasFields or settingsError %}
+        <div id="settings" class="meta" data-id="{{ report.id }}">
+            {% if settingsError %}
+                <p class="error">{{ settingsError }}</p>
+            {% endif %}
+            {% for field in fields.fields %}
+                {{ field.renderField() }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 
 {% block content %}
     {% if result.hasErrors() %}

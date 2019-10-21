@@ -10,6 +10,8 @@
 
 namespace superbig\reports\models;
 
+use craft\elements\Entry;
+use craft\elements\User;
 use superbig\reports\Reports;
 
 use Craft;
@@ -19,36 +21,30 @@ use craft\base\Model;
  * @author    Superbig
  * @package   Reports
  * @since     1.0.0
+ *
+ * @property array  $fields
+ * @property Report $report
  */
 class Fields extends Model
 {
     // Public Properties
     // =========================================================================
 
-    /**  @var array */
-    public $header = [];
-
-    /**  @var array */
-    public $content = [];
-
-    /**  @var array */
-    public $rows = [];
-
-    /**  @var string */
-    public $filename = 'output';
-
-    /**  @var array */
     public $fields = [];
-
+    public $report;
 
     // Public Methods
     // =========================================================================
 
     public function init()
     {
-        if (!empty($this->rows)) {
-            $this->content = $this->rows;
-        }
+    }
+
+    public function setReport(Report $report)
+    {
+        $this->report = $report;
+
+        return $this;
     }
 
     /**
@@ -66,53 +62,154 @@ class Fields extends Model
         return $this;
     }
 
-    public function setHeader(array $headers = [])
+    public function textField(array $config = [])
     {
-        $this->header = $headers;
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TEXT]);
+        $this->fields[] = $field;
 
         return $this;
     }
 
-    public function getContent(): array
+    public function dateField(array $config = [])
     {
-        return $this->content;
-    }
-
-    /**
-     * @param $content
-     *
-     * @return $this
-     */
-    public function setContent($content): self
-    {
-        $this->content = $content;
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_DATE]);
+        $this->fields[] = $field;
 
         return $this;
     }
 
-    public function getConfig()
+
+    public function timeField(array $config = [])
     {
-        return [
-            'header' => $this->header,
-            'rows'   => $this->content,
-        ];
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TIME]);
+        $this->fields[] = $field;
+
+        return $this;
     }
 
-    public function getFilename($ext = null): string
+    public function dateTimeField(array $config = [])
     {
-        $filename = pathinfo(filter_var($this->filename, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW), PATHINFO_FILENAME);
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_DATETIME]);
+        $this->fields[] = $field;
 
-        return "$filename.$ext";
+        return $this;
     }
 
-    /**
-     * @param null $filename
-     *
-     * @return $this
-     */
-    public function setFilename($filename = null): self
+    public function selectField(array $config = [])
     {
-        $this->filename = $filename;
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_SELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function multiselectField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_MULTISELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function colorField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_COLOR]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function textareaField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TEXTAREA]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function checkboxField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function checkboxGroupField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_GROUP]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function checkboxSelectField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_SELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function radioGroupField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_RADIO_GROUP]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function lightswitchField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_LIGHTSWITCH]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function editableTableField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_EDITABLE_TABLE]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+
+    public function entriesField(array $config = [])
+    {
+        $config         = array_merge($config, [
+            'elementType' => Entry::class,
+        ]);
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function usersField(array $config = [])
+    {
+        $config         = array_merge($config, [
+            'elementType' => User::class,
+        ]);
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function elementSelectField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $this->fields[] = $field;
+
+        return $this;
+    }
+
+    public function autosuggestField(array $config = [])
+    {
+        $field          = new Field(['config' => $config, 'type' => Field::TYPE_AUTOSUGGEST]);
+        $this->fields[] = $field;
 
         return $this;
     }
