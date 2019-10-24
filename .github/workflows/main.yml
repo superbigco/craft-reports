@@ -1,11 +1,16 @@
-workflow "PHPCS Inspections" {
-  resolves = ["Run phpcs inspection"]
-  on = "push"
-}
-
-action "Run phpcs inspection" {
-  uses = "rtCamp/rtCamp/action-phpcs-inspection@master"
-  env = {
-    DIFF_BASE="master"
-  }
-}
+steps:
+  - name: Checkout
+    uses: actions/checkout@master
+  - name: Setup PHP
+    uses: shivammathur/setup-php@master
+    with:
+      php-version: "7.3"
+      extension-csv: mbstring, xdebug #optional
+      ini-values-csv: post_max_size=256M, short_open_tag=On #optional
+      coverage: xdebug #optional
+  - name: Check PHP Version
+    run: php -v
+  - name: Check Composer Version
+    run: composer -V
+  - name: Check PHP Extensions
+    run: php -m
