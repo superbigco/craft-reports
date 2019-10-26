@@ -66,7 +66,7 @@ To generate a list of users that has logged in the last 30 days:
 {% if result is defined %}
     {% do result.setHeader(['Username', 'Name', 'Email']) %}
     {% for user in users %}
-        {% do result.append([user.username, user.getName(), user.email] ]) %}
+        {% do result.append([user.username, user.getName(), user.email ]) %}
     {% endfor %}
 {% endif %}
 ```
