@@ -34,6 +34,7 @@
         }
     },
     "extra": {
+        "name": "Reports",
         "handle": "reports",
         "changelogUrl": "https://raw.githubusercontent.com/superbigco/craft-reports/master/CHANGELOG.md",
         "class": "superbig\\reports\\Reports"
