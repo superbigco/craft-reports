@@ -67,6 +67,14 @@ class Reports extends Plugin
         return Craft::t('reports', $this->getSettings()->pluginName);
     }
 
+    public function getCpNavItem()
+    {
+        $navItem          = parent::getCpNavItem();
+        $navItem['label'] = $this->getPluginName();
+
+        return $navItem;
+    }
+
     /**
      * @return mixed[]
      */
