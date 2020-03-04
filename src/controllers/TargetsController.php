@@ -167,7 +167,7 @@ class TargetsController extends Controller
         $target->handle      = $request->getParam('handle');
         $target->targetClass = $request->getParam('targetClass');
         $target->settings    = $request->getParam('settings');
-        $connectedReportIds  = $request->getParam('connectedReportIds');
+        $connectedReportIds  = $request->getParam('connectedReportIds', []);
 
         // Save it
         if (!Reports::$plugin->getTarget()->saveReportTarget($target)) {
@@ -176,6 +176,10 @@ class TargetsController extends Controller
             ]);
 
             return;
+        }
+
+        if (!is_array($connectedReportIds)) {
+            $connectedReportIds = [];
         }
 
         Reports::$plugin->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
