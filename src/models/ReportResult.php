@@ -22,8 +22,15 @@ use craft\base\Model;
  */
 class ReportResult extends Model
 {
+    const TYPE_TABLE = 'table';
+    const TYPE_CHART = 'chart';
+
     // Public Properties
     // =========================================================================
+
+    public $title;
+    public $type;
+    public $summary;
 
     /**  @var array */
     public $header = [];
@@ -62,6 +69,13 @@ class ReportResult extends Model
             $content = [$content];
         }
         $this->content = array_merge($this->content, $content);
+
+        return $this;
+    }
+
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
 
         return $this;
     }

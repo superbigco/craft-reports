@@ -19,6 +19,7 @@ use superbig\reports\records\ReportsRecord;
 
 use Craft;
 use craft\base\Component;
+use Twig\Error\SyntaxError;
 use yii\db\Exception;
 
 /**
@@ -99,22 +100,28 @@ class Report extends Component
                 'report' => $report,
             ]);
             //$view->renderString($report->settings, ['result' => $result]);
-        } catch (TemplateLoaderException $e) {
+        } catch (SyntaxError $e) {
+            //dump($e);
+            $error = Craft::t(
+                'reports',
+                "Template Error in {sourcePath} at line {line}:\n{error}",
+                [
+                    'error'      => $e->getMessage(),
+                    'line'       => $e->getLine(),
+                    'filename'   => $e->getSourceContext()->getName(),
+                    'sourcePath' => $e->getSourceContext()->getPath(),
+                    'trace'      => $e->getTraceAsString(),
+                ]
+            );
+            $result->addError('content', $error);
+        } catch (\Exception $e) {
+            dump($e);
             $error = Craft::t(
                 'reports',
                 "Template Error: {error}\n{trace}",
                 [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
-                ]
-            );
-            $result->addError('content', $error);
-        } catch (\Exception $e) {
-            $error = Craft::t(
-                'reports',
-                'Template Error: {error}',
-                [
-                    'error' => $e->getMessage(),
                 ]
             );
             $result->addError('content', $error);
@@ -163,6 +170,7 @@ class Report extends Component
         $record->content     = $report->content;
         $record->settings    = $report->settings;
         $record->dateLastRun = $report->dateLastRun;
+        $record->fieldValues = $report->fieldValues;
         $db                  = Craft::$app->getDb();
         $transaction         = $db->beginTransaction();
 
@@ -205,6 +213,7 @@ class Report extends Component
                 'content',
                 'settings',
                 'dateLastRun',
+                'fieldValues',
             ]);
     }
 
@@ -212,7 +221,9 @@ class Report extends Component
     {
         $view            = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
-        $reportSettings  = new ReportSettings();
+        $reportSettings  = new ReportSettings([
+            'report' => $report,
+        ]);
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
 

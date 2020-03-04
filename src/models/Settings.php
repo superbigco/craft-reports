@@ -32,11 +32,18 @@ class Settings extends Model
     // Public Methods
     // =========================================================================
 
+    public function init()
+    {
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
-        return [];
+        return [
+            ['pluginName', 'default', 'value' => 'Reports'],
+        ];
     }
 }

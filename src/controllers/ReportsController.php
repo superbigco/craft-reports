@@ -10,6 +10,8 @@
 
 namespace superbig\reports\controllers;
 
+use craft\helpers\Json;
+use putyourlightson\logtofile\LogToFile;
 use superbig\reports\assetbundles\result\ResultAsset;
 use superbig\reports\models\Report;
 use superbig\reports\Reports;
@@ -133,6 +135,49 @@ class ReportsController extends Controller
     /**
      * @param int|null $id
      *
+     * @return \yii\web\Response
+     * @throws \yii\base\Exception
+     * @throws \yii\db\Exception
+     */
+    public function actionResult()
+    {
+        $request  = Craft::$app->getRequest();
+        $view     = Craft::$app->getView();
+        $reportId = $request->getRequiredParam('id');
+        $fields   = $request->getParam('fields');
+
+        LogToFile::$handle = 'reports';
+        LogToFile::info(Json::encode($fields, JSON_PRETTY_PRINT));
+
+        /** @var Report $report */
+        $report = Reports::$plugin->getReport()->getReportById($reportId);
+
+        if (!$report) {
+            throw new NotFoundHttpException();
+        }
+
+        $reportSettings = $report->reportSettings();
+        if (!empty($fields) && $reportSettings->hasFields()) {
+            $report->setFieldValuesFromRequest('fields');
+        }
+
+        $result = $report->run();
+        $html   = $view->renderTemplate('reports/reports/_table', [
+            'report'           => $report,
+            'result'           => $result,
+            'hasFields'        => false,
+            'connectedTargets' => $report->getConnectedTargets(),
+        ]);
+
+        return $this->asJson([
+            'html'   => $html,
+            'fields' => $fields,
+        ]);
+    }
+
+    /**
+     * @param int|null $id
+     *
      * @return \craft\web\Response|\yii\console\Response
      * @throws \yii\base\Exception
      * @throws \yii\db\Exception
@@ -147,7 +192,6 @@ class ReportsController extends Controller
             'mimeType' => $info['mimeType'],
         ]);
     }
-
 
     public function actionSave()
     {
@@ -184,6 +228,46 @@ class ReportsController extends Controller
         Craft::$app->getSession()->setNotice($notice);
 
         return $this->redirectToPostedUrl($report, 'reports');
+    }
+
+    public function actionSaveFields()
+    {
+        $this->requirePostRequest();
+
+        $request = Craft::$app->getRequest();
+        $id      = $request->getRequiredParam('id');
+        $fields  = $request->getParam('fields');
+
+        /** @var Report $report */
+        $report = Reports::$plugin->getReport()->getReportById($id);
+
+        if (!$report) {
+            throw new NotFoundHttpException("No report with id {$id} found");
+        }
+
+        $reportSettings = $report->reportSettings();
+        if (!empty($fields) && $reportSettings->hasFields()) {
+            $report->setFieldValuesFromRequest('fields');
+            //$report->fieldValues = $fields;
+        }
+
+        // LogToFile::$handle = 'reports';
+        // LogToFile::info(Json::encode($report->toArray(), JSON_PRETTY_PRINT));
+
+        // Save it
+        if (!Reports::$plugin->getReport()->saveReport($report)) {
+            return $this->asErrorJson('Failed to save report');
+        }
+
+        $notice = Craft::t(
+            'reports',
+            'Report was saved'
+        );
+
+        return $this->asJson([
+            'success' => true,
+            'notice'  => $notice,
+        ]);
     }
 
     public function actionDelete()

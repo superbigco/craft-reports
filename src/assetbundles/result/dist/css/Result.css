@@ -9,3 +9,6 @@
  * @package   Reports
  * @since     1.0.0
  */
+button.btn {
+    font-size: inherit;
+}

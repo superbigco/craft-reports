@@ -1,0 +1,59 @@
+{% if result.title %}
+    <h2>{{ result.title }}</h2>
+{% endif %}
+
+{% if result.hasErrors() %}
+    <h1>There was a problem rendering this report:</h1>
+    <ul>
+        {% for key,errors in result.getErrors() %}
+            {% for error in errors %}
+                <li>
+                        <pre>
+                            {%- spaceless %}
+                                {{ error }}
+                            {% endspaceless -%}
+                        </pre>
+                </li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if result.getContent() | length > 0 %}
+    <table class="data fullwidth">
+        {% if result.getHeader() | length %}
+            <thead>
+            <tr>
+                {% for column in result.getHeader() %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+        {% endif %}
+        <tbody>
+        {% for row in result.getContent() %}
+            <tr>
+                {% for column in row %}
+                    <td>{{ column }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="light">No results</p>
+{% endif %}
+
+<pre>
+        {{ dump(report.fieldValues) }}
+</pre>
+
+{#
+<hr>
+
+<pre>
+    {% for key, value in report.fieldValues %}
+        {{ dump(report.getFieldValue(key)) }}
+    {% endfor %}
+</pre>
+#}

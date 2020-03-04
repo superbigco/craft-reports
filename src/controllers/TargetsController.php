@@ -47,12 +47,12 @@ class TargetsController extends Controller
             'queue-run' => [Reports::PERMISSION_RUN_REPORTS, Reports::PERMISSION_MANAGE_REPORTS],
             'run'       => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
 
-            'index'     => [Reports::PERMISSION_MANAGE_TARGETS],
-            'new'       => [Reports::PERMISSION_MANAGE_TARGETS],
-            'create'    => [Reports::PERMISSION_MANAGE_TARGETS],
-            'save'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'edit'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'delete'    => [Reports::PERMISSION_MANAGE_TARGETS],
+            'index'  => [Reports::PERMISSION_MANAGE_TARGETS],
+            'new'    => [Reports::PERMISSION_MANAGE_TARGETS],
+            'create' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'save'   => [Reports::PERMISSION_MANAGE_TARGETS],
+            'edit'   => [Reports::PERMISSION_MANAGE_TARGETS],
+            'delete' => [Reports::PERMISSION_MANAGE_TARGETS],
         ];
 
         if (isset($permissions[ $action->id ])) {

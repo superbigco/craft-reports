@@ -17,6 +17,9 @@
     {% if canManageReports %}
         <div class="buttons right">
             {% if report.id is not null %}
+                <div class="spinner hidden" id="js-updateSpinner"></div>
+                <div class="spacer"></div>
+                <button class="btn secondary hidden" id="js-saveSettings">{{ "Save Settings"|t('reports') }}</button>
                 <a href="{{ url("reports/edit/#{report.id}") }}" class="btn ">{{ "Edit"|t('reports') }}</a>
                 {% if connectedTargets|length %}
                     <div class="btngroup">
@@ -54,53 +57,20 @@
             {% if settingsError %}
                 <p class="error">{{ settingsError }}</p>
             {% endif %}
-            {% for field in fields.fields %}
-                {{ field.renderField() }}
-            {% endfor %}
+            {% namespace 'fields' %}
+                {% for field in fields %}
+                    {{ field.renderField(report) }}
+                {% endfor %}
+            {% endnamespace %}
         </div>
     {% endif %}
 {% endblock %}
 
 
 {% block content %}
-    {% if result.hasErrors() %}
-        <h1>There was a problem rendering this report:</h1>
-        <ul>
-            {% for key,errors in result.getErrors() %}
-                {% for error in errors %}
-                    <li>
-                        <pre>
-                            {%- spaceless %}
-                                {{ error }}
-                            {% endspaceless -%}
-                        </pre>
-                    </li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if result.getContent() | length %}
-        <table class="data fullwidth">
-            {% if result.getHeader() | length %}
-                <thead>
-                <tr>
-                    {% for column in result.getHeader() %}
-                        <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-            {% endif %}
-            <tbody>
-            {% for row in result.getContent() %}
-                <tr>
-                    {% for column in row %}
-                        <td>{{ column }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+    <div id="js-reportResults">
+        {% include 'reports/reports/_table' %}
+    </div>
 {% endblock %}
 
 {% do view.registerAssetBundle("superbig\\reports\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}

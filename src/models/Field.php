@@ -10,6 +10,7 @@
 
 namespace superbig\reports\models;
 
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Template;
 use superbig\reports\Reports;
 
@@ -58,6 +59,19 @@ class Field extends Model
     public $options;
     public $labelId;
 
+    public static $arrayFieldtypes = [
+        self::TYPE_CHECKBOX_GROUP,
+        self::TYPE_RADIO_GROUP,
+        self::TYPE_EDITABLE_TABLE,
+        self::TYPE_MULTISELECT,
+        self::TYPE_ELEMENT_SELECT,
+    ];
+    public static $dateFieldtypes  = [
+        self::TYPE_DATE,
+        self::TYPE_TIME,
+        self::TYPE_DATETIME,
+    ];
+
     // Public Methods
     // =========================================================================
 
@@ -65,6 +79,7 @@ class Field extends Model
     {
         if (empty($this->config['value']) && isset($this->config['defaultValue'])) {
             $this->config['value'] = $this->config['defaultValue'];
+            $this->defaultValue    = $this->config['defaultValue'];
         }
 
         $this->config['id'] = $this->config['name'];
@@ -83,8 +98,9 @@ class Field extends Model
         ];
     }
 
-    public function renderField()
+    public function renderField(Report $report)
     {
+        $currentValue =
         $html = Craft::$app->getView()->renderTemplateMacro('_includes/forms', $this->type, [
             'config' => $this->config,
         ]);
@@ -92,10 +108,32 @@ class Field extends Model
         return Template::raw($html);
     }
 
+    public function getHandle()
+    {
+        return $this->config['name'] ?? null;
+    }
+
+    public function getType()
+    {
+        return $this->type ?? self::TYPE_TEXT;
+    }
+
+    public function normalizeValue($value)
+    {
+        if (in_array($this->getType(), self::$arrayFieldtypes) && !is_array($value)) {
+            return (array)$value;
+        }
+
+        if (in_array($this->getType(), self::$dateFieldtypes) && $value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
+            return $date;
+        }
+
+        return $value;
+    }
+
     public function rules()
     {
         $rules = parent::rules();
-
 
         return $rules;
     }

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+### Added
+- Added custom fields support to reports
+
 ### Fixed
 - Fixed extra dot in filename
 - Fixed edit link in breadcrumb for users without permission

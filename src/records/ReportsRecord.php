@@ -26,6 +26,7 @@ use craft\db\ActiveRecord;
  * @property string    $handle
  * @property string    $content
  * @property string    $settings
+ * @property array     $fieldValues
  * @property \DateTime $dateLastRun
  */
 class ReportsRecord extends ActiveRecord
