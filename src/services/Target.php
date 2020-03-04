@@ -133,7 +133,7 @@ class Target extends Component
             ->select('targetId')
             ->from(ReportsTargetsRecord::tableName())
             ->where(
-                'reportId = :reportId',
+                '[[reportId]] = :reportId',
                 [':reportId' => $report->id]
             )
             ->column();
@@ -151,7 +151,7 @@ class Target extends Component
             ->select('reportId')
             ->from(ReportsTargetsRecord::tableName())
             ->where(
-                'targetId = :targetId',
+                '[[targetId]] = :targetId',
                 [':targetId' => $target->id]
             )
             ->column();
@@ -167,7 +167,7 @@ class Target extends Component
             ->select('reportId')
             ->from(ReportsTargetsRecord::tableName())
             ->where(
-                'targetId = :targetId',
+                '[[targetId]] = :targetId',
                 [':targetId' => $target->id]
             )
             ->column();
@@ -186,7 +186,7 @@ class Target extends Component
             ->createCommand()
             ->delete(
                 ReportsTargetsRecord::tableName(),
-                'targetId = :targetId',
+                '[[targetId]] = :targetId',
                 [':targetId' => $target->id]
             )
             ->execute();
@@ -246,7 +246,6 @@ class Target extends Component
             $record = new TargetRecord();
         }
 
-        $record->id          = $report->id;
         $record->name        = $report->name;
         $record->handle      = $report->handle;
         $record->targetClass = $report->targetClass;
@@ -275,7 +274,7 @@ class Target extends Component
      */
     public function deleteReportTarget($id = null): bool
     {
-        return (bool)TargetRecord::deleteAll('id = :id', [':id' => $id]);
+        return (bool)TargetRecord::deleteAll('[[id]] = :id', [':id' => $id]);
     }
 
     /**

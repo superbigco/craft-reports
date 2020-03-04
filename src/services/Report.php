@@ -127,13 +127,13 @@ class Report extends Component
 
     /**
      * @param ReportModel $report
+     * @param bool        $runValidation
      *
      * @return bool
      * @throws Exception
      */
-    public function saveReport(ReportModel $report): bool
+    public function saveReport(ReportModel $report, bool $runValidation = true): bool
     {
-
         if ($report->id) {
             $record = ReportsRecord::findOne($report->id);
 
@@ -151,7 +151,12 @@ class Report extends Component
             $record = new ReportsRecord();
         }
 
-        $record->id          = $report->id;
+        if ($runValidation && !$report->validate()) {
+            Craft::info('Report not saved due to validation error.', __METHOD__);
+
+            return false;
+        }
+
         $record->siteId      = $report->siteId;
         $record->name        = $report->name;
         $record->handle      = $report->handle;
@@ -182,7 +187,7 @@ class Report extends Component
      */
     public function deleteReport($id = null): bool
     {
-        return (bool)ReportsRecord::deleteAll('id = :id', [':id' => $id]);
+        return (bool)ReportsRecord::deleteAll('[[id]] = :id', [':id' => $id]);
     }
 
     /**
