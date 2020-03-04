@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 - Fixed extra dot in filename
 - Fixed edit link in breadcrumb for users without permission
+- Fixed Postgres compatibility issues
 
 ## 1.0.7 - 2019-10-13
 
