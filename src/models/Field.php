@@ -10,11 +10,11 @@
 
 namespace superbig\reports\models;
 
-use craft\helpers\Template;
-use superbig\reports\Reports;
-
 use Craft;
 use craft\base\Model;
+
+use craft\helpers\Template;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -27,29 +27,29 @@ class Field extends Model
     // Public Properties
     // =========================================================================
 
-    const TYPE_TEXT            = 'textField';
-    const TYPE_DATE            = 'dateField';
-    const TYPE_TIME            = 'timeField';
-    const TYPE_DATETIME        = 'dateTimeField';
-    const TYPE_SELECT          = 'selectField';
-    const TYPE_MULTISELECT     = 'multiselectField';
-    const TYPE_COLOR           = 'colorField';
-    const TYPE_TEXTAREA        = 'textareaField';
-    const TYPE_CHECKBOX        = 'checkboxField';
-    const TYPE_CHECKBOX_GROUP  = 'checkboxGroupField';
+    const TYPE_TEXT = 'textField';
+    const TYPE_DATE = 'dateField';
+    const TYPE_TIME = 'timeField';
+    const TYPE_DATETIME = 'dateTimeField';
+    const TYPE_SELECT = 'selectField';
+    const TYPE_MULTISELECT = 'multiselectField';
+    const TYPE_COLOR = 'colorField';
+    const TYPE_TEXTAREA = 'textareaField';
+    const TYPE_CHECKBOX = 'checkboxField';
+    const TYPE_CHECKBOX_GROUP = 'checkboxGroupField';
     const TYPE_CHECKBOX_SELECT = 'checkboxSelectField';
-    const TYPE_RADIO_GROUP     = 'radioGroupField';
-    const TYPE_LIGHTSWITCH     = 'lightswitchField';
-    const TYPE_EDITABLE_TABLE  = 'editableTableField';
-    const TYPE_ELEMENT_SELECT  = 'elementSelectField';
-    const TYPE_AUTOSUGGEST     = 'autosuggestField';
+    const TYPE_RADIO_GROUP = 'radioGroupField';
+    const TYPE_LIGHTSWITCH = 'lightswitchField';
+    const TYPE_EDITABLE_TABLE = 'editableTableField';
+    const TYPE_ELEMENT_SELECT = 'elementSelectField';
+    const TYPE_AUTOSUGGEST = 'autosuggestField';
 
-    public $first  = false;
+    public $first = false;
     public $config = [];
     public $label;
     public $name;
     public $instructions;
-    public $type   = self::TYPE_TEXT;
+    public $type = self::TYPE_TEXT;
     public $value;
     public $placeholder;
     public $fieldLabel;
@@ -70,14 +70,14 @@ class Field extends Model
         $this->config['id'] = $this->config['name'];
 
         $g = [
-            'label'        => $this->label,
-            'name'         => $this->name,
-            'id'           => $this->name,
-            'value'        => $this->value,
-            'placeholder'  => $this->placeholder,
-            'options'      => $this->options,
-            'warning'      => $this->warning,
-            'labelId'      => $this->labelId,
+            'label' => $this->label,
+            'name' => $this->name,
+            'id' => $this->name,
+            'value' => $this->value,
+            'placeholder' => $this->placeholder,
+            'options' => $this->options,
+            'warning' => $this->warning,
+            'labelId' => $this->labelId,
             //'errors' => $this->getErrors('placeholder'),
             'instructions' => $this->instructions,
         ];

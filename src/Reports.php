@@ -10,26 +10,26 @@
 
 namespace superbig\reports;
 
-use superbig\reports\services\Email as EmailService;
-use superbig\reports\services\Report as ReportService;
-use superbig\reports\services\Chart as ChartService;
-use superbig\reports\services\Target;
-use superbig\reports\services\Widget as WidgetService;
-use superbig\reports\variables\ReportsVariable;
-use superbig\reports\twigextensions\ReportsTwigExtension;
-use superbig\reports\models\Settings;
-use superbig\reports\widgets\ReportsWidget as ReportsWidgetWidget;
-
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\console\Application as ConsoleApplication;
-use craft\web\UrlManager;
-use craft\web\twig\variables\CraftVariable;
-use craft\services\Dashboard;
+use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\services\Dashboard;
+use craft\services\Plugins;
+use craft\web\twig\variables\CraftVariable;
+
+use craft\web\UrlManager;
+use superbig\reports\models\Settings;
+use superbig\reports\services\Chart as ChartService;
+use superbig\reports\services\Email as EmailService;
+use superbig\reports\services\Report as ReportService;
+use superbig\reports\services\Target;
+use superbig\reports\services\Widget as WidgetService;
+use superbig\reports\twigextensions\ReportsTwigExtension;
+use superbig\reports\variables\ReportsVariable;
+use superbig\reports\widgets\ReportsWidget as ReportsWidgetWidget;
 
 use yii\base\Event;
 
@@ -53,24 +53,28 @@ class Reports extends Plugin
     use ServicesTrait;
     use UserPermissionsTrait;
 
-    // Static Properties
-    // =========================================================================
+    public const PERMISSION_RUN_REPORTS = 'reports:runReports';
 
-    const PERMISSION_RUN_REPORTS    = 'reports:runReports';
-    const PERMISSION_MANAGE_REPORTS = 'reports:manageReports';
-    const PERMISSION_MANAGE_TARGETS = 'reports:manageExportTargets';
+    /**
+     * @var string
+     */
+    public const PERMISSION_MANAGE_REPORTS = 'reports:manageReports';
+
+    /**
+     * @var string
+     */
+    public const PERMISSION_MANAGE_TARGETS = 'reports:manageExportTargets';
 
     /**
      * @var Reports
      */
     public static $plugin;
 
-    // Public Properties
-    // =========================================================================
+    public string $schemaVersion = '1.0.3';
 
-    public $schemaVersion = '1.0.3';
-    public $hasCpSettings = true;
-    public $hasCpSection  = true;
+    public bool $hasCpSettings = true;
+
+    public bool $hasCpSection = true;
 
     // Public Methods
     // =========================================================================
@@ -80,9 +84,12 @@ class Reports extends Plugin
         return Craft::t('reports', $this->getSettings()->pluginName);
     }
 
-    public function getCpNavItem()
+    /**
+     * @return mixed[]
+     */
+    public function getCpNavItem(): array
     {
-        $navItem          = parent::getCpNavItem();
+        $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
 
         return $navItem;
@@ -91,7 +98,7 @@ class Reports extends Plugin
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;
@@ -107,12 +114,12 @@ class Reports extends Plugin
         }
     }
 
-    public function initEventListeners()
+    public function initEventListeners(): void
     {
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function(RegisterUrlRulesEvent $event) {
+            static function (RegisterUrlRulesEvent $event) : void {
                 $event->rules['reports/schedule/run'] = 'reports/schedule/run';
             }
         );
@@ -120,7 +127,7 @@ class Reports extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function(RegisterUrlRulesEvent $event) {
+            function(RegisterUrlRulesEvent $event): void {
                 $event->rules = array_merge($event->rules, $this->getCpRoutes());
             }
         );
@@ -129,7 +136,7 @@ class Reports extends Plugin
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
-            function(Event $event) {
+            static function (Event $event) : void {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
                 $variable->set('reports', ReportsVariable::class);
@@ -139,7 +146,7 @@ class Reports extends Plugin
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function(PluginEvent $event) {
+            function(PluginEvent $event): void {
                 if ($event->plugin === $this) {
                 }
             }
@@ -158,7 +165,7 @@ class Reports extends Plugin
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            function(RegisterComponentTypesEvent $event) {
+            static function (RegisterComponentTypesEvent $event) : void {
                 $event->types[] = ReportsWidgetWidget::class;
             }
         );
@@ -167,17 +174,17 @@ class Reports extends Plugin
     public function getCpRoutes(): array
     {
         return [
-            'reports'                       => 'reports/reports/index',
-            'reports/edit/<id:\d+>'         => 'reports/reports/edit',
-            'reports/run/<id:\d+>'          => 'reports/reports/run',
-            'reports/export/<id:\d+>'       => 'reports/reports/export',
-            'reports/new'                   => 'reports/reports/new',
+            'reports' => 'reports/reports/index',
+            'reports/edit/<id:\d+>' => 'reports/reports/edit',
+            'reports/run/<id:\d+>' => 'reports/reports/run',
+            'reports/export/<id:\d+>' => 'reports/reports/export',
+            'reports/new' => 'reports/reports/new',
 
             // Targets
-            'reports/targets'               => 'reports/targets/index',
+            'reports/targets' => 'reports/targets/index',
             'reports/targets/edit/<id:\d+>' => 'reports/targets/edit',
-            'reports/targets/run/<id:\d+>'  => 'reports/targets/run',
-            'reports/targets/new'           => 'reports/targets/new',
+            'reports/targets/run/<id:\d+>' => 'reports/targets/run',
+            'reports/targets/new' => 'reports/targets/new',
         ];
     }
 
@@ -187,7 +194,7 @@ class Reports extends Plugin
     /**
      * @inheritdoc
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): \superbig\reports\models\Settings
     {
         return new Settings();
     }

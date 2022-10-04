@@ -24,7 +24,6 @@ trait UserPermissionsTrait
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
             function(RegisterUserPermissionsEvent $event) {
-
                 $event->permissions[ $this->name ] = $this->_getPermissions();
             }
         );
@@ -35,28 +34,28 @@ trait UserPermissionsTrait
      */
     public function getCpNavItem()
     {
-        $navItem          = parent::getCpNavItem();
+        $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
-        $subNav           = [];
+        $subNav = [];
 
         /** @var User $currentUser */
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         $permissions = [
             [
-                'type'   => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
-                'id'     => 'reports',
+                'type' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+                'id' => 'reports',
                 'config' => [
                     'label' => 'Reports',
-                    'url'   => 'reports',
+                    'url' => 'reports',
                 ],
             ],
             [
-                'type'   => Reports::PERMISSION_MANAGE_TARGETS,
-                'id'     => 'targets',
+                'type' => Reports::PERMISSION_MANAGE_TARGETS,
+                'id' => 'targets',
                 'config' => [
                     'label' => 'Report Targets',
-                    'url'   => 'reports/targets',
+                    'url' => 'reports/targets',
                 ],
             ],
         ];
@@ -87,7 +86,7 @@ trait UserPermissionsTrait
     private function _getPermissions()
     {
         $permissions = [
-            Reports::PERMISSION_RUN_REPORTS    => 'Run Reports',
+            Reports::PERMISSION_RUN_REPORTS => 'Run Reports',
             Reports::PERMISSION_MANAGE_REPORTS => 'Manage Reports',
             Reports::PERMISSION_MANAGE_TARGETS => 'Manage Export Targets',
         ];

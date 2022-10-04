@@ -10,14 +10,13 @@
 
 namespace superbig\reports\services;
 
-use craft\db\Query;
-use craft\web\twig\TemplateLoaderException;
-use superbig\reports\models\ReportTarget as ReportTargetModel;
-use superbig\reports\records\ReportsTargetsRecord;
-use superbig\reports\records\TargetRecord;
-
 use Craft;
 use craft\base\Component;
+use craft\db\Query;
+use superbig\reports\models\ReportTarget as ReportTargetModel;
+
+use superbig\reports\records\ReportsTargetsRecord;
+use superbig\reports\records\TargetRecord;
 use superbig\reports\Reports;
 use superbig\reports\targets\EmailTarget;
 use superbig\reports\targets\ReportTarget;
@@ -31,11 +30,16 @@ use yii\db\Exception;
  */
 class Target extends Component
 {
-    private $_targets;
+    /**
+     * @var mixed[]|ReportTargetModel[]|null
+     */
+    private ?array $_targets = null;
 
     // Public Methods
     // =========================================================================
-
+    /**
+     * @return array<class-string<\superbig\reports\targets\EmailTarget>>
+     */
     public function getTargetTypes(): array
     {
         return [
@@ -45,20 +49,19 @@ class Target extends Component
 
     /**
      * @param $config
-     *
-     * @return null|ReportTarget
      */
-    public function createTargetType($config)
+    public function createTargetType($config): ?\superbig\reports\targets\ReportTarget
     {
         if (\is_string($config)) {
             $config = ['type' => $config];
         }
+
         try {
             /** @var ReportTarget $target */
             $target = \craft\helpers\Component::createComponent($config, ReportTargetInterface::class);
-        } catch (\Throwable $e) {
+        } catch (\Throwable $throwable) {
             $target = null;
-            Craft::error($e->getMessage(), __METHOD__);
+            Craft::error($throwable->getMessage(), __METHOD__);
         }
 
         return $target;
@@ -66,11 +69,9 @@ class Target extends Component
 
 
     /**
-     * @param int $id
-     *
      * @return null|ReportTargetModel
      */
-    public function getReportTargetById(int $id = null)
+    public function getReportTargetById(int $id = null): ?ReportTargetModel
     {
         $query = $this
             ->_createQuery()
@@ -89,7 +90,7 @@ class Target extends Component
      *
      * @return null|ReportTargetModel
      */
-    public function getReportTargetByHandle($handle = null)
+    public function getReportTargetByHandle($handle = null): ?ReportTargetModel
     {
         $query = $this
             ->_createQuery()
@@ -123,6 +124,9 @@ class Target extends Component
         return $this->_targets;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getConnectedTargetsForReport(\superbig\reports\models\Report $report): array
     {
         if (!$report->id) {
@@ -140,11 +144,12 @@ class Target extends Component
 
         return array_filter(
             $this->getAllReportTargets(),
-            function(ReportTargetModel $reportTarget) use ($targetIds) {
-                return \in_array($reportTarget->id, $targetIds, false);
-            });
+            static fn(ReportTargetModel $reportTarget): bool => \in_array($reportTarget->id, $targetIds, false));
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getConnectedReportIds(ReportTargetModel $target): array
     {
         return (new Query())
@@ -157,6 +162,9 @@ class Target extends Component
             ->column();
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getConnectedReportsForTarget(\superbig\reports\models\ReportTarget $target): array
     {
         if (!$target->id) {
@@ -174,12 +182,10 @@ class Target extends Component
 
         return array_filter(
             Reports::$plugin->getReport()->getAllReports(),
-            function(\superbig\reports\models\Report $report) use ($reportIds) {
-                return \in_array($report->id, $reportIds, false);
-            });
+            static fn(\superbig\reports\models\Report $report): bool => \in_array($report->id, $reportIds, false));
     }
 
-    public function syncTargetReportRelationship(ReportTargetModel $target, array $reportIds = [])
+    public function syncTargetReportRelationship(ReportTargetModel $target, array $reportIds = []): void
     {
         // Delete existing relationships
         (new Query())
@@ -208,31 +214,26 @@ class Target extends Component
     /**
      * @param null $id
      *
-     * @return bool
      * @throws \yii\base\Exception
      */
-    public function runReportTarget($id = null): bool
+    public function runReportTarget(int $id = null): bool
     {
-        $target           = $this->getReportTargetById($id);
+        $target = $this->getReportTargetById($id);
         $connectedReports = $this->getConnectedReportsForTarget($target);
-        $targetType       = $target->getTargetType();
+        $targetType = $target->getTargetType();
 
         return $targetType->send($target, $connectedReports);
     }
 
     /**
-     * @param ReportTargetModel $report
-     *
-     * @return bool
      * @throws Exception
      */
     public function saveReportTarget(ReportTargetModel $report): bool
     {
-
         if ($report->id) {
             $record = TargetRecord::findOne($report->id);
 
-            if (!$record->id) {
+            if ($record->id === 0) {
                 $error = Craft::t(
                     'reports',
                     'No report exists with the id {id}',
@@ -241,27 +242,26 @@ class Target extends Component
 
                 throw new Exception($error);
             }
-        }
-        else {
+        } else {
             $record = new TargetRecord();
         }
 
-        $record->name        = $report->name;
-        $record->handle      = $report->handle;
+        $record->name = $report->name;
+        $record->handle = $report->handle;
         $record->targetClass = $report->targetClass;
-        $record->settings    = $report->settings;
-        $db                  = Craft::$app->getDb();
-        $transaction         = $db->beginTransaction();
+        $record->settings = $report->settings;
+        $db = Craft::$app->getDb();
+        $transaction = $db->beginTransaction();
 
         try {
             $record->save(false);
             $transaction->commit();
 
             $report->id = $record->id;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $transaction->rollBack();
 
-            throw $e;
+            throw $exception;
         }
 
         return true;
@@ -269,17 +269,12 @@ class Target extends Component
 
     /**
      * @param null $id
-     *
-     * @return bool
      */
     public function deleteReportTarget($id = null): bool
     {
         return (bool)TargetRecord::deleteAll('[[id]] = :id', [':id' => $id]);
     }
 
-    /**
-     * @return Query
-     */
     public function _createQuery(): Query
     {
         return (new Query())

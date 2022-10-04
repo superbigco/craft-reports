@@ -10,15 +10,15 @@
 
 namespace superbig\reports\services;
 
+use Craft;
+use craft\base\Component;
 use craft\db\Query;
 use craft\web\twig\TemplateLoaderException;
 use superbig\reports\models\Report as ReportModel;
 use superbig\reports\models\ReportResult;
+
 use superbig\reports\models\ReportSettings;
 use superbig\reports\records\ReportsRecord;
-
-use Craft;
-use craft\base\Component;
 use yii\db\Exception;
 
 /**
@@ -28,7 +28,10 @@ use yii\db\Exception;
  */
 class Report extends Component
 {
-    private $_reports;
+    /**
+     * @var mixed[]|ReportModel[]|null
+     */
+    private ?array $_reports = null;
 
     // Public Methods
     // =========================================================================
@@ -38,7 +41,7 @@ class Report extends Component
      *
      * @return ReportModel|null
      */
-    public function getReportById($id = null)
+    public function getReportById($id = null): ?ReportModel
     {
         $query = $this
             ->_createQuery()
@@ -75,7 +78,6 @@ class Report extends Component
     /**
      * @param Report $report
      *
-     * @return ReportResult
      * @throws Exception
      * @throws \yii\base\Exception
      */
@@ -86,8 +88,8 @@ class Report extends Component
         // @todo try/catch and return error
         $this->saveReport($report);
 
-        $result          = new ReportResult();
-        $view            = Craft::$app->getView();
+        $result = new ReportResult();
+        $view = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
@@ -99,22 +101,22 @@ class Report extends Component
                 'report' => $report,
             ]);
             //$view->renderString($report->settings, ['result' => $result]);
-        } catch (TemplateLoaderException $e) {
+        } catch (TemplateLoaderException $templateLoaderException) {
             $error = Craft::t(
                 'reports',
                 "Template Error: {error}\n{trace}",
                 [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
+                    'error' => $templateLoaderException->getMessage(),
+                    'trace' => $templateLoaderException->getTraceAsString(),
                 ]
             );
             $result->addError('content', $error);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $error = Craft::t(
                 'reports',
                 'Template Error: {error}',
                 [
-                    'error' => $e->getMessage(),
+                    'error' => $exception->getMessage(),
                 ]
             );
             $result->addError('content', $error);
@@ -126,10 +128,7 @@ class Report extends Component
     }
 
     /**
-     * @param ReportModel $report
-     * @param bool        $runValidation
      *
-     * @return bool
      * @throws Exception
      */
     public function saveReport(ReportModel $report, bool $runValidation = true): bool
@@ -137,7 +136,7 @@ class Report extends Component
         if ($report->id) {
             $record = ReportsRecord::findOne($report->id);
 
-            if (!$record->id) {
+            if ($record->id === 0) {
                 $error = Craft::t(
                     'reports',
                     'No report exists with the id {id}',
@@ -146,8 +145,7 @@ class Report extends Component
 
                 throw new Exception($error);
             }
-        }
-        else {
+        } else {
             $record = new ReportsRecord();
         }
 
@@ -157,24 +155,24 @@ class Report extends Component
             return false;
         }
 
-        $record->siteId      = $report->siteId;
-        $record->name        = $report->name;
-        $record->handle      = $report->handle;
-        $record->content     = $report->content;
-        $record->settings    = $report->settings;
+        $record->siteId = $report->siteId;
+        $record->name = $report->name;
+        $record->handle = $report->handle;
+        $record->content = $report->content;
+        $record->settings = $report->settings;
         $record->dateLastRun = $report->dateLastRun;
-        $db                  = Craft::$app->getDb();
-        $transaction         = $db->beginTransaction();
+        $db = Craft::$app->getDb();
+        $transaction = $db->beginTransaction();
 
         try {
             $record->save(false);
             $transaction->commit();
 
             $report->id = $record->id;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $transaction->rollBack();
 
-            throw $e;
+            throw $exception;
         }
 
         return true;
@@ -182,17 +180,12 @@ class Report extends Component
 
     /**
      * @param null $id
-     *
-     * @return bool
      */
     public function deleteReport($id = null): bool
     {
         return (bool)ReportsRecord::deleteAll('[[id]] = :id', [':id' => $id]);
     }
 
-    /**
-     * @return Query
-     */
     public function _createQuery(): Query
     {
         return (new Query())
@@ -208,11 +201,11 @@ class Report extends Component
             ]);
     }
 
-    public function settingsForReport(ReportModel $report)
+    public function settingsForReport(ReportModel $report): \superbig\reports\models\ReportSettings
     {
-        $view            = Craft::$app->getView();
+        $view = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
-        $reportSettings  = new ReportSettings();
+        $reportSettings = new ReportSettings();
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
 
@@ -220,15 +213,15 @@ class Report extends Component
             // Render template and allow data and settings to be set in Twig
             $view->renderString($report->settings, [
                 'settings' => $reportSettings,
-                'report'   => $report,
+                'report' => $report,
             ]);
             //$view->renderString($report->settings, ['result' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $error = Craft::t(
                 'reports',
                 'Setting Template Error: {error}',
                 [
-                    'error' => $e->getMessage(),
+                    'error' => $exception->getMessage(),
                 ]
             );
             $report->addError('settings', $error);

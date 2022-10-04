@@ -12,7 +12,6 @@ namespace superbig\reports\variables;
 
 use superbig\reports\Reports;
 
-use Craft;
 use superbig\reports\targets\ReportTargetInterface;
 
 /**

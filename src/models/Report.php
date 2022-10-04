@@ -10,10 +10,10 @@
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
 use Craft;
+
 use craft\base\Model;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -25,14 +25,14 @@ class Report extends Model
     // Public Properties
     // =========================================================================
 
-    public  $id;
-    public  $siteId;
-    public  $name;
-    public  $handle;
-    public  $content;
-    public  $settings;
-    public  $fieldValues;
-    public  $dateLastRun;
+    public $id;
+    public $siteId;
+    public $name;
+    public $handle;
+    public $content;
+    public $settings;
+    public $fieldValues;
+    public $dateLastRun;
     private $_targets;
 
     // Public Methods

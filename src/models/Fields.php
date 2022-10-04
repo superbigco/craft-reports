@@ -10,12 +10,11 @@
 
 namespace superbig\reports\models;
 
+use craft\base\Model;
 use craft\elements\Entry;
 use craft\elements\User;
-use superbig\reports\Reports;
 
-use Craft;
-use craft\base\Model;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -64,7 +63,7 @@ class Fields extends Model
 
     public function textField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TEXT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_TEXT]);
         $this->fields[] = $field;
 
         return $this;
@@ -72,7 +71,7 @@ class Fields extends Model
 
     public function dateField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_DATE]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_DATE]);
         $this->fields[] = $field;
 
         return $this;
@@ -81,7 +80,7 @@ class Fields extends Model
 
     public function timeField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TIME]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_TIME]);
         $this->fields[] = $field;
 
         return $this;
@@ -89,7 +88,7 @@ class Fields extends Model
 
     public function dateTimeField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_DATETIME]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_DATETIME]);
         $this->fields[] = $field;
 
         return $this;
@@ -97,7 +96,7 @@ class Fields extends Model
 
     public function selectField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_SELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_SELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -105,7 +104,7 @@ class Fields extends Model
 
     public function multiselectField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_MULTISELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_MULTISELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -113,7 +112,7 @@ class Fields extends Model
 
     public function colorField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_COLOR]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_COLOR]);
         $this->fields[] = $field;
 
         return $this;
@@ -121,7 +120,7 @@ class Fields extends Model
 
     public function textareaField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_TEXTAREA]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_TEXTAREA]);
         $this->fields[] = $field;
 
         return $this;
@@ -129,7 +128,7 @@ class Fields extends Model
 
     public function checkboxField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX]);
         $this->fields[] = $field;
 
         return $this;
@@ -137,7 +136,7 @@ class Fields extends Model
 
     public function checkboxGroupField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_GROUP]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_GROUP]);
         $this->fields[] = $field;
 
         return $this;
@@ -145,7 +144,7 @@ class Fields extends Model
 
     public function checkboxSelectField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_SELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_CHECKBOX_SELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -153,7 +152,7 @@ class Fields extends Model
 
     public function radioGroupField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_RADIO_GROUP]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_RADIO_GROUP]);
         $this->fields[] = $field;
 
         return $this;
@@ -161,7 +160,7 @@ class Fields extends Model
 
     public function lightswitchField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_LIGHTSWITCH]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_LIGHTSWITCH]);
         $this->fields[] = $field;
 
         return $this;
@@ -169,7 +168,7 @@ class Fields extends Model
 
     public function editableTableField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_EDITABLE_TABLE]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_EDITABLE_TABLE]);
         $this->fields[] = $field;
 
         return $this;
@@ -178,10 +177,10 @@ class Fields extends Model
 
     public function entriesField(array $config = [])
     {
-        $config         = array_merge($config, [
+        $config = array_merge($config, [
             'elementType' => Entry::class,
         ]);
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -189,10 +188,10 @@ class Fields extends Model
 
     public function usersField(array $config = [])
     {
-        $config         = array_merge($config, [
+        $config = array_merge($config, [
             'elementType' => User::class,
         ]);
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -200,7 +199,7 @@ class Fields extends Model
 
     public function elementSelectField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_ELEMENT_SELECT]);
         $this->fields[] = $field;
 
         return $this;
@@ -208,7 +207,7 @@ class Fields extends Model
 
     public function autosuggestField(array $config = [])
     {
-        $field          = new Field(['config' => $config, 'type' => Field::TYPE_AUTOSUGGEST]);
+        $field = new Field(['config' => $config, 'type' => Field::TYPE_AUTOSUGGEST]);
         $this->fields[] = $field;
 
         return $this;

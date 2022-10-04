@@ -10,14 +10,14 @@
 
 namespace superbig\reports\migrations;
 
-use superbig\reports\records\ReportsRecord;
-use superbig\reports\records\ReportsTargetsRecord;
-use superbig\reports\records\TargetRecord;
-use superbig\reports\Reports;
-
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
+use superbig\reports\records\ReportsRecord;
+
+use superbig\reports\records\ReportsTargetsRecord;
+use superbig\reports\records\TargetRecord;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -82,15 +82,15 @@ class Install extends Migration
             $this->createTable(
                 ReportsRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'siteId'      => $this->integer()->notNull(),
-                    'name'        => $this->string(255)->notNull()->defaultValue(''),
-                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
-                    'content'     => $this->longText(),
-                    'settings'    => $this->longText(),
+                    'uid' => $this->uid(),
+                    'siteId' => $this->integer()->notNull(),
+                    'name' => $this->string(255)->notNull()->defaultValue(''),
+                    'handle' => $this->string(255)->notNull()->defaultValue(''),
+                    'content' => $this->longText(),
+                    'settings' => $this->longText(),
                     'fieldValues' => $this->longText(),
                     'dateLastRun' => $this->dateTime()->null(),
                 ]
@@ -103,14 +103,14 @@ class Install extends Migration
             $this->createTable(
                 TargetRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'name'        => $this->string(255)->notNull()->defaultValue(''),
-                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
+                    'uid' => $this->uid(),
+                    'name' => $this->string(255)->notNull()->defaultValue(''),
+                    'handle' => $this->string(255)->notNull()->defaultValue(''),
                     'targetClass' => $this->string(255)->notNull()->defaultValue(''),
-                    'settings'    => $this->text(),
+                    'settings' => $this->text(),
                 ]
             );
         }
@@ -120,12 +120,12 @@ class Install extends Migration
             $this->createTable(
                 ReportsTargetsRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'reportId'    => $this->integer()->notNull(),
-                    'targetId'    => $this->integer()->notNull(),
+                    'uid' => $this->uid(),
+                    'reportId' => $this->integer()->notNull(),
+                    'targetId' => $this->integer()->notNull(),
                 ]
             );
         }

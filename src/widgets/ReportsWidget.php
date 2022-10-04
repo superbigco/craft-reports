@@ -10,11 +10,11 @@
 
 namespace superbig\reports\widgets;
 
-use superbig\reports\Reports;
-use superbig\reports\assetbundles\reportswidgetwidget\ReportsWidgetWidgetAsset;
-
 use Craft;
 use craft\base\Widget;
+
+use superbig\reports\assetbundles\reportswidgetwidget\ReportsWidgetWidgetAsset;
+use superbig\reports\Reports;
 
 /**
  * Reports Widget
@@ -25,7 +25,6 @@ use craft\base\Widget;
  */
 class ReportsWidget extends Widget
 {
-
     // Public Properties
     // =========================================================================
 
@@ -88,7 +87,7 @@ class ReportsWidget extends Widget
         return Craft::$app->getView()->renderTemplate(
             'reports/_components/widgets/ReportsWidget_settings',
             [
-                'widget' => $this
+                'widget' => $this,
             ]
         );
     }
@@ -103,7 +102,7 @@ class ReportsWidget extends Widget
         return Craft::$app->getView()->renderTemplate(
             'reports/_components/widgets/ReportsWidget_body',
             [
-                'message' => $this->message
+                'message' => $this->message,
             ]
         );
     }

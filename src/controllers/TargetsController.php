@@ -10,16 +10,16 @@
 
 namespace superbig\reports\controllers;
 
+use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use craft\web\Controller;
 use superbig\reports\jobs\ExportJob;
 use superbig\reports\models\Report;
+
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
-
-use Craft;
-use craft\web\Controller;
 use superbig\reports\targets\ReportTargetInterface;
 use yii\web\ForbiddenHttpException;
 
@@ -30,7 +30,6 @@ use yii\web\ForbiddenHttpException;
  */
 class TargetsController extends Controller
 {
-
     // Protected Properties
     // =========================================================================
 
@@ -45,19 +44,19 @@ class TargetsController extends Controller
         $permissions = [
             // Allow users that can run reports to also run export targets
             'queue-run' => [Reports::PERMISSION_RUN_REPORTS, Reports::PERMISSION_MANAGE_REPORTS],
-            'run'       => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'run' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
 
-            'index'     => [Reports::PERMISSION_MANAGE_TARGETS],
-            'new'       => [Reports::PERMISSION_MANAGE_TARGETS],
-            'create'    => [Reports::PERMISSION_MANAGE_TARGETS],
-            'save'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'edit'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'delete'    => [Reports::PERMISSION_MANAGE_TARGETS],
+            'index' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'new' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'create' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'save' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'edit' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'delete' => [Reports::PERMISSION_MANAGE_TARGETS],
         ];
 
         if (isset($permissions[ $action->id ])) {
-            $users     = Craft::$app->getUser();
-            $checks    = array_map(function($permission) use ($users) {
+            $users = Craft::$app->getUser();
+            $checks = array_map(function($permission) use ($users) {
                 return $users->checkPermission($permission);
             }, $permissions[ $action->id ]);
             $canAccess = \in_array(true, $checks);
@@ -86,10 +85,10 @@ class TargetsController extends Controller
         $target = new ReportTarget();
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'             => $target,
-            'reportOptions'      => $this->_getReportOptions(),
+            'target' => $target,
+            'reportOptions' => $this->_getReportOptions(),
             'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
-            'typeSettingsHtml'   => $this->_editView($target),
+            'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
 
@@ -98,10 +97,10 @@ class TargetsController extends Controller
         $target = Reports::$plugin->getTarget()->getReportTargetById($id);
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'             => $target,
-            'reportOptions'      => $this->_getReportOptions(),
+            'target' => $target,
+            'reportOptions' => $this->_getReportOptions(),
             'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
-            'typeSettingsHtml'   => $this->_editView($target),
+            'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
 
@@ -141,7 +140,7 @@ class TargetsController extends Controller
      */
     public function actionQueueRun()
     {
-        $id  = Craft::$app->getRequest()->getRequiredParam('id');
+        $id = Craft::$app->getRequest()->getRequiredParam('id');
         $job = new ExportJob([
             'targetId' => $id,
         ]);
@@ -156,18 +155,18 @@ class TargetsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $id      = $request->getParam('id');
-        $target  = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $id = $request->getParam('id');
+        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
 
         if (!$target) {
             $target = new ReportTarget();
         }
 
-        $target->name        = $request->getParam('name');
-        $target->handle      = $request->getParam('handle');
+        $target->name = $request->getParam('name');
+        $target->handle = $request->getParam('handle');
         $target->targetClass = $request->getParam('targetClass');
-        $target->settings    = $request->getParam('settings');
-        $connectedReportIds  = $request->getParam('connectedReportIds', []);
+        $target->settings = $request->getParam('settings');
+        $connectedReportIds = $request->getParam('connectedReportIds', []);
 
         // Save it
         if (!Reports::$plugin->getTarget()->saveReportTarget($target)) {
@@ -209,13 +208,13 @@ class TargetsController extends Controller
     private function _editView(ReportTarget $target)
     {
         // Get the target types
-        $allTargetTypes     = Reports::$plugin->getTarget()->getTargetTypes();
+        $allTargetTypes = Reports::$plugin->getTarget()->getTargetTypes();
         $selectedDefinition = array_merge(
             $target->settings[ $target->targetClass ] ?? [],
             ['type' => $target->targetClass]
         );
-        $selectedType       = Reports::$plugin->getTarget()->createTargetType($selectedDefinition);
-        $targetOptions      = [];
+        $selectedType = Reports::$plugin->getTarget()->createTargetType($selectedDefinition);
+        $targetOptions = [];
 
         /** @var ReportTargetInterface $class */
         foreach ($allTargetTypes as $class) {
@@ -233,9 +232,9 @@ class TargetsController extends Controller
             $result = Craft::$app->getView()->renderTemplate(
                 'reports/_targets/targetSettings',
                 [
-                    'target'             => $target,
-                    'allTargetTypes'     => $allTargetTypes,
-                    'targetOptions'      => $targetOptions,
+                    'target' => $target,
+                    'allTargetTypes' => $allTargetTypes,
+                    'targetOptions' => $targetOptions,
                     'selectedTargetType' => $selectedType,
                 ]
             );

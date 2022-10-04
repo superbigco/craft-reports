@@ -10,11 +10,11 @@
 
 namespace superbig\reports\services;
 
-use craft\mail\Message;
-use superbig\reports\Reports;
-
 use Craft;
 use craft\base\Component;
+
+use craft\mail\Message;
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -31,15 +31,14 @@ class Email extends Component
      */
     public function emailReport(\superbig\reports\models\Report $report, $emails = [])
     {
-        $emailTemplate   = "";
         $renderVariables = [
 
         ];
 
-        $originalLanguage     = Craft::$app->language;
-        $templatePath         = Reports::$plugin->getSettings()->emailPath;
-        $view                 = Craft::$app->getView();
-        $oldTemplateMode      = $view->getTemplateMode();
+        $originalLanguage = Craft::$app->language;
+        $templatePath = Reports::$plugin->getSettings()->emailPath;
+        $view = Craft::$app->getView();
+        $oldTemplateMode = $view->getTemplateMode();
         Craft::$app->language = $originalLanguage;
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
@@ -63,7 +62,6 @@ class Email extends Component
         }*/
 
         if (!Craft::$app->getMailer()->send($newEmail)) {
-
             $error = Craft::t(
                 'reports',
                 'Email Error: {error}',

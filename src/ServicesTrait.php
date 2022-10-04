@@ -22,18 +22,15 @@ trait ServicesTrait
     public function initServices()
     {
         $this->setComponents([
-            'email'  => Email::class,
+            'email' => Email::class,
             'export' => Export::class,
             'report' => Report::class,
-            'chart'  => Chart::class,
+            'chart' => Chart::class,
             'widget' => Widget::class,
             'target' => Target::class,
         ]);
     }
 
-    /**
-     * @return Report
-     */
     public function getReport(): Report
     {
         return $this->get('report');

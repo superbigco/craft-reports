@@ -10,10 +10,9 @@
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Model;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -99,7 +98,7 @@ class ReportResult extends Model
     {
         return [
             'header' => $this->header,
-            'rows'   => $this->content,
+            'rows' => $this->content,
         ];
     }
 

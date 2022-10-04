@@ -14,16 +14,16 @@
  * @since     1.0.0
  */
 return [
-    'craft-reports'         => 'Reports',
+    'craft-reports' => 'Reports',
     'Reports plugin loaded' => 'Reports plugin loaded',
-    'Create Reports'        => 'Create Reports',
-    'Run Reports'           => 'Run Reports',
-    'Export Reports'        => 'Export Reports',
-    'Edit Reports'          => 'Edit Reports',
-    'Schedule Reports'      => 'Schedule Reports',
-    'Report was saved'      => 'Report was saved',
+    'Create Reports' => 'Create Reports',
+    'Run Reports' => 'Run Reports',
+    'Export Reports' => 'Export Reports',
+    'Edit Reports' => 'Edit Reports',
+    'Schedule Reports' => 'Schedule Reports',
+    'Report was saved' => 'Report was saved',
 
     // Report Targets
-    'Email'                 => 'Email',
-    'Slack'                 => 'Slack',
+    'Email' => 'Email',
+    'Slack' => 'Slack',
 ];

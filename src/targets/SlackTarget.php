@@ -51,6 +51,5 @@ class SlackTarget extends ReportTarget
 
     public function formatMessage(Report $report)
     {
-
     }
 }

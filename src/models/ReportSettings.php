@@ -10,10 +10,9 @@
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Model;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -31,17 +30,14 @@ class ReportSettings extends Model
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         if (!$this->fields) {
             $this->fields = new Fields();
         }
     }
 
-    /**
-     * @return Fields
-     */
-    public function getFields()
+    public function getFields(): \superbig\reports\models\Fields
     {
         return $this->fields;
     }
@@ -49,13 +45,13 @@ class ReportSettings extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return [];
     }
 
-    public function hasFields()
+    public function hasFields(): bool
     {
-        return count($this->getFields()->fields) > 0;
+        return (is_countable($this->getFields()->fields) ? count($this->getFields()->fields) : 0) > 0;
     }
 }

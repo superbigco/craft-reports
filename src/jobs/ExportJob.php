@@ -10,12 +10,12 @@
 
 namespace superbig\reports\jobs;
 
+use Craft;
 use craft\helpers\App;
+use craft\queue\BaseJob;
+
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
-
-use Craft;
-use craft\queue\BaseJob;
 use yii\base\Exception;
 
 /**

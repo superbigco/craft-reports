@@ -10,12 +10,10 @@
 
 namespace superbig\reports\models;
 
-use craft\helpers\Json;
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Model;
-use superbig\reports\targets\EmailTarget;
+use craft\helpers\Json;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -28,15 +26,19 @@ class ReportTarget extends Model
     // =========================================================================
 
     public $id;
+
     public $name;
+
     public $handle;
+
     public $targetClass;
+
     public $settings;
 
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         if (!$this->targetClass) {
             $this->targetClass = Reports::$plugin->getTarget()->getDefaultTargetType();
@@ -47,10 +49,7 @@ class ReportTarget extends Model
         }
     }
 
-    /**
-     * @return null|\superbig\reports\targets\ReportTarget
-     */
-    public function getTargetType()
+    public function getTargetType(): ?\superbig\reports\targets\ReportTarget
     {
         $selectedDefinition = array_merge(
             $this->settings[ $this->targetClass ] ?? [],
@@ -63,7 +62,7 @@ class ReportTarget extends Model
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return [];
     }

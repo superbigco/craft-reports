@@ -12,8 +12,6 @@ namespace superbig\reports\targets;
 
 use Craft;
 use craft\mail\Message;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\BadResponseException;
 use superbig\reports\models\Report;
 use superbig\reports\Reports;
 
@@ -27,9 +25,9 @@ use superbig\reports\Reports;
  */
 class EmailTarget extends ReportTarget
 {
-    public $emails  = [];
+    public $emails = [];
     public $subject = '';
-    public $body    = '';
+    public $body = '';
 
     public static function displayName(): string
     {
@@ -38,7 +36,7 @@ class EmailTarget extends ReportTarget
 
     public function send(\superbig\reports\models\ReportTarget $target, array $reports = []): bool
     {
-        $view            = Craft::$app->getView();
+        $view = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
 
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
@@ -49,10 +47,10 @@ class EmailTarget extends ReportTarget
         $message->setSubject($this->_getSubject($target));
 
         $variables = [
-            'target'  => $target,
+            'target' => $target,
             'reports' => $reports,
         ];
-        $body      = $view->renderString($this->body, $variables);
+        $body = $view->renderString($this->body, $variables);
         $message->setHtmlBody($body);
 
         foreach ($reports as $report) {
@@ -88,7 +86,6 @@ class EmailTarget extends ReportTarget
 
     public function formatMessage(Report $report)
     {
-
     }
 
     /**
@@ -128,5 +125,4 @@ class EmailTarget extends ReportTarget
 
         return $subject;
     }
-
 }

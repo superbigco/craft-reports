@@ -10,10 +10,9 @@
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Model;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -26,8 +25,8 @@ class Settings extends Model
     // =========================================================================
 
     public $enableScheduler = true;
-    public $helpers         = [];
-    public $pluginName      = 'Reports';
+    public $helpers = [];
+    public $pluginName = 'Reports';
 
     // Public Methods
     // =========================================================================

@@ -12,8 +12,6 @@ namespace superbig\reports\twigextensions;
 
 use superbig\reports\Reports;
 
-use Craft;
-
 /**
  * @author    Superbig
  * @package   Reports
