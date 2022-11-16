@@ -26,17 +26,7 @@ use yii\web\NotFoundHttpException;
  */
 class ReportsController extends Controller
 {
-    // Protected Properties
-    // =========================================================================
-
-    /**
-     * @var    bool|array Allows anonymous access to this controller's actions.
-     *         The actions must be in 'kebab-case'
-     * @access protected
-     */
-    protected $allowAnonymous = [];
-
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $permissions = [
             'index' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
@@ -46,24 +36,23 @@ class ReportsController extends Controller
             'delete' => [Reports::PERMISSION_MANAGE_REPORTS],
         ];
 
-        if (isset($permissions[ $action->id ])) {
-            $users = Craft::$app->getUser();
-            $checks = array_map(function($permission) use ($users) {
-                return $users->checkPermission($permission);
-            }, $permissions[ $action->id ]);
-            $canAccess = \in_array(true, $checks);
+        if (!isset($permissions[ $action->id ])) {
+            return parent::beforeAction($action);
 
-
-            if (!$canAccess) {
-                throw new ForbiddenHttpException('User is not permitted to perform this action');
-            }
         }
 
-        return parent::beforeAction($action);
-    }
+        $users = Craft::$app->getUser();
+        $checks = array_map(function($permission) use ($users) {
+            return $users->checkPermission($permission);
+        }, $permissions[ $action->id ]);
+        $canAccess = \in_array(true, $checks);
 
-    // Public Methods
-    // =========================================================================
+        if (!$canAccess) {
+            throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+
+        return true;
+    }
 
     public function actionIndex(): \yii\web\Response
     {

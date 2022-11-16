@@ -44,12 +44,12 @@ class Field extends Model
     const TYPE_ELEMENT_SELECT = 'elementSelectField';
     const TYPE_AUTOSUGGEST = 'autosuggestField';
 
-    public $first = false;
-    public $config = [];
-    public $label;
-    public $name;
+    public bool $first = false;
+    public array $config = [];
+    public string $label;
+    public string $name;
     public $instructions;
-    public $type = self::TYPE_TEXT;
+    public string $type = self::TYPE_TEXT;
     public $value;
     public $placeholder;
     public $fieldLabel;
@@ -58,10 +58,7 @@ class Field extends Model
     public $options;
     public $labelId;
 
-    // Public Methods
-    // =========================================================================
-
-    public function init()
+    public function init(): void
     {
         if (empty($this->config['value']) && isset($this->config['defaultValue'])) {
             $this->config['value'] = $this->config['defaultValue'];
@@ -92,7 +89,7 @@ class Field extends Model
         return Template::raw($html);
     }
 
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
 

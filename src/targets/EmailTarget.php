@@ -11,6 +11,7 @@
 namespace superbig\reports\targets;
 
 use Craft;
+use craft\helpers\App;
 use craft\mail\Message;
 use superbig\reports\models\Report;
 use superbig\reports\Reports;
@@ -88,20 +89,14 @@ class EmailTarget extends ReportTarget
     {
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): string|null
     {
         return Craft::$app->getView()->renderTemplate('reports/_targets/email/settings', [
             'targetType' => $this,
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
         $rules = array_merge($rules, [
@@ -120,9 +115,8 @@ class EmailTarget extends ReportTarget
 
     private function _getSubject(\superbig\reports\models\ReportTarget $target)
     {
-        $subject = Craft::parseEnv($this->subject);
-        $subject = Craft::$app->getView()->renderObjectTemplate($subject, $target);
+        $subject = App::parseEnv(($this->subject));
 
-        return $subject;
+        return Craft::$app->getView()->renderObjectTemplate($subject, $target);
     }
 }

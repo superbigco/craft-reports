@@ -54,26 +54,12 @@ class Reports extends Plugin
     use UserPermissionsTrait;
 
     public const PERMISSION_RUN_REPORTS = 'reports:runReports';
-
-    /**
-     * @var string
-     */
     public const PERMISSION_MANAGE_REPORTS = 'reports:manageReports';
-
-    /**
-     * @var string
-     */
     public const PERMISSION_MANAGE_TARGETS = 'reports:manageExportTargets';
 
-    /**
-     * @var Reports
-     */
     public static $plugin;
-
     public string $schemaVersion = '1.0.3';
-
     public bool $hasCpSettings = true;
-
     public bool $hasCpSection = true;
 
     // Public Methods
@@ -106,8 +92,6 @@ class Reports extends Plugin
         $this->initServices();
         $this->initPermissions();
         $this->initEventListeners();
-
-        Craft::$app->view->registerTwigExtension(new ReportsTwigExtension());
 
         if (Craft::$app instanceof ConsoleApplication) {
             $this->controllerNamespace = 'superbig\reports\console\controllers';

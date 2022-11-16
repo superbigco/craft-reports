@@ -25,26 +25,10 @@ use yii\base\Exception;
  */
 class ExportJob extends BaseJob
 {
-    // Public Properties
-    // =========================================================================
+    public int $targetId;
+    private ReportTarget $_target;
 
-    /**
-     * @var int The target ID
-     */
-    public $targetId;
-
-    /**
-     * @var ReportTarget The target
-     */
-    private $_target;
-
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
-    public function execute($queue)
+    public function execute($queue): void
     {
         App::maxPowerCaptain();
 
@@ -52,22 +36,14 @@ class ExportJob extends BaseJob
             $this->setProgress($queue, $step);
         };
 
-        $target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
+        // $target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
         $result = Reports::$plugin->getTarget()->runReportTarget($this->targetId);
 
         if (!$result) {
             throw new Exception('Failed to run export target');
         }
-
-        return true;
     }
 
-    // Protected Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
     protected function defaultDescription(): string
     {
         $targetName = $this->getTarget() ? $this->getTarget()->name : 'Reports Target';
@@ -75,10 +51,7 @@ class ExportJob extends BaseJob
         return Craft::t('reports', $targetName);
     }
 
-    /**
-     * @return ReportTarget|null
-     */
-    public function getTarget()
+    public function getTarget(): ReportTarget|null
     {
         if (!$this->_target) {
             $this->_target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);

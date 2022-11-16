@@ -22,9 +22,6 @@ use superbig\reports\Reports;
  */
 class Report extends Model
 {
-    // Public Properties
-    // =========================================================================
-
     public $id;
     public $siteId;
     public $name;
@@ -34,26 +31,14 @@ class Report extends Model
     public $fieldValues;
     public $dateLastRun;
     private $_targets;
-
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['content', 'settings'], 'string'],
         ];
     }
 
-    /**
-     * @return ReportResult
-     * @throws \yii\base\Exception
-     * @throws \yii\db\Exception
-     */
-    public function run()
+    public function run(): ReportResult
     {
         return Reports::$plugin->getReport()->runReport($this);
     }

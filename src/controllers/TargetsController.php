@@ -39,7 +39,7 @@ class TargetsController extends Controller
      * @return bool
      * @throws \yii\web\ForbiddenHttpException
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $permissions = [
             // Allow users that can run reports to also run export targets
@@ -54,20 +54,21 @@ class TargetsController extends Controller
             'delete' => [Reports::PERMISSION_MANAGE_TARGETS],
         ];
 
-        if (isset($permissions[ $action->id ])) {
-            $users = Craft::$app->getUser();
-            $checks = array_map(function($permission) use ($users) {
-                return $users->checkPermission($permission);
-            }, $permissions[ $action->id ]);
-            $canAccess = \in_array(true, $checks);
-
-
-            if (!$canAccess) {
-                throw new ForbiddenHttpException('User is not permitted to perform this action');
-            }
+        if (!isset($permissions[ $action->id ])) {
+            return parent::beforeAction($action);
         }
 
-        return parent::beforeAction($action);
+        $users = Craft::$app->getUser();
+        $checks = array_map(function($permission) use ($users) {
+            return $users->checkPermission($permission);
+        }, $permissions[ $action->id ]);
+        $canAccess = \in_array(true, $checks);
+
+        if (!$canAccess) {
+            throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+
+        return true;
     }
 
     // Public Methods

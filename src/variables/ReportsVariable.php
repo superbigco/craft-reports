@@ -21,15 +21,7 @@ use superbig\reports\targets\ReportTargetInterface;
  */
 class ReportsVariable
 {
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * @param string|array $config
-     *
-     * @return ReportTargetInterface
-     */
-    public function createTargetType($config): ReportTargetInterface
+    public function createTargetType(string | array $config): ReportTargetInterface
     {
         return Reports::$plugin->getTarget()->createTargetType($config);
     }

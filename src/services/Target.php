@@ -47,10 +47,7 @@ class Target extends Component
         ];
     }
 
-    /**
-     * @param $config
-     */
-    public function createTargetType($config): ?\superbig\reports\targets\ReportTarget
+    public function createTargetType(string | array $config): ?\superbig\reports\targets\ReportTarget
     {
         if (\is_string($config)) {
             $config = ['type' => $config];

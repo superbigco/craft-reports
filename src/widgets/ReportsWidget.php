@@ -52,21 +52,12 @@ class ReportsWidget extends Widget
         return Craft::getAlias("@superbig/reports/assetbundles/reportswidgetwidget/dist/img/ReportsWidget-icon.svg");
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function maxColspan()
+    public static function maxColspan(): ?int
     {
         return null;
     }
 
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
         $rules = array_merge(
@@ -79,10 +70,7 @@ class ReportsWidget extends Widget
         return $rules;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate(
             'reports/_components/widgets/ReportsWidget_settings',
@@ -92,10 +80,7 @@ class ReportsWidget extends Widget
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getBodyHtml()
+    public function getBodyHtml(): ?string
     {
         Craft::$app->getView()->registerAssetBundle(ReportsWidgetWidgetAsset::class);
 
