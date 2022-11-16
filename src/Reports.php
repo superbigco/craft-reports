@@ -62,9 +62,6 @@ class Reports extends Plugin
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
 
-    // Public Methods
-    // =========================================================================
-
     public function getPluginName()
     {
         return Craft::t('reports', $this->getSettings()->pluginName);
@@ -77,6 +74,20 @@ class Reports extends Plugin
     {
         $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
+
+        if (Craft::$app->getUser()->checkPermission(self::PERMISSION_MANAGE_REPORTS) || Craft::$app->getUser()->checkPermission(self::PERMISSION_RUN_REPORTS)) {
+            $navItem['subnav']['reports'] = [
+                'label' => Craft::t('reports', 'Reports'),
+                'url' => 'reports',
+            ];
+        }
+
+        if (Craft::$app->getUser()->checkPermission(self::PERMISSION_MANAGE_TARGETS)) {
+            $navItem['subnav']['targets'] = [
+                'label' => Craft::t('reports', 'Report Targets'),
+                'url' => 'reports/targets',
+            ];
+        }
 
         return $navItem;
     }
@@ -136,15 +147,6 @@ class Reports extends Plugin
             }
         );
 
-        Craft::info(
-            Craft::t(
-                'reports',
-                '{name} plugin loaded',
-                ['name' => $this->name]
-            ),
-            __METHOD__
-        );
-
         // @todo: Add Widgets
         Event::on(
             Dashboard::class,
@@ -171,9 +173,6 @@ class Reports extends Plugin
             'reports/targets/new' => 'reports/targets/new',
         ];
     }
-
-    // Protected Methods
-    // =========================================================================
 
     /**
      * @inheritdoc

@@ -102,7 +102,7 @@ class Target extends Component
     }
 
     /**
-     * @return ReportTargetModel[]
+     * @return array<int, ReportTargetModel>
      */
     public function getAllReportTargets(): array
     {
@@ -122,7 +122,7 @@ class Target extends Component
     }
 
     /**
-     * @return mixed[]
+     * @return array<int, ReportTarget>
      */
     public function getConnectedTargetsForReport(\superbig\reports\models\Report $report): array
     {

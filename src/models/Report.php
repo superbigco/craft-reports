@@ -24,13 +24,16 @@ class Report extends Model
 {
     public $id;
     public $siteId;
-    public $name;
-    public $handle;
-    public $content;
-    public $settings;
+    public string $name;
+    public string $handle;
+    public string $content;
+    public string $settings;
     public $fieldValues;
-    public $dateLastRun;
-    private $_targets;
+    public \DateTime $dateLastRun;
+
+    /** @var array<int, ReportTarget> */
+    private array $_targets;
+
     public function rules(): array
     {
         return [
@@ -50,11 +53,7 @@ class Report extends Model
 
     public function getConnectedTargets()
     {
-        if (!$this->_targets) {
-            $this->_targets = Reports::$plugin->getTarget()->getConnectedTargetsForReport($this);
-        }
-
-        return $this->_targets;
+        return $this->_targets ??= Reports::$plugin->getTarget()->getConnectedTargetsForReport($this);
     }
 
     public function canManage()
