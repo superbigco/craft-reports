@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+### Added
+- Initial beta release of Craft 4 version
+
 ### Fixed
 - Fixed extra dot in filename
 - Fixed edit link in breadcrumb for users without permission
