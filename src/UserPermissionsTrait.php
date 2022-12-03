@@ -24,7 +24,10 @@ trait UserPermissionsTrait
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
             function(RegisterUserPermissionsEvent $event) {
-                $event->permissions[ $this->name ] = $this->_getPermissions();
+                $event->permissions[] = [
+                    'heading' => $this->name,
+                    'permissions' => $this->_getPermissions(),
+                ];
             }
         );
     }
