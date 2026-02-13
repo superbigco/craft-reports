@@ -157,11 +157,11 @@ class Report extends Component
             return false;
         }
 
-        $record->siteId      = $report->siteId;
-        $record->name        = $report->name;
-        $record->handle      = $report->handle;
-        $record->content     = $report->content;
-        $record->settings    = $report->settings;
+        $record->siteId = $report->siteId;
+        $record->name = $report->name;
+        $record->handle = $report->handle;
+        $record->content = $report->content;
+        $record->settings = $report->settings;
         $record->dateLastRun = $report->dateLastRun;
         $db = Craft::$app->getDb();
         $transaction = $db->beginTransaction();

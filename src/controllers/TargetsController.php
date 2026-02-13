@@ -164,8 +164,8 @@ class TargetsController extends Controller
         $target->name = $request->getParam('name');
         $target->handle = $request->getParam('handle');
         $target->targetClass = $request->getParam('targetClass');
-        $target->settings    = $request->getParam('settings');
-        $connectedReportIds  = $request->getParam('connectedReportIds', []);
+        $target->settings = $request->getParam('settings');
+        $connectedReportIds = $request->getParam('connectedReportIds', []);
 
         // Save it
         if (!Reports::getInstance()->getTarget()->saveReportTarget($target)) {

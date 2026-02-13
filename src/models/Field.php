@@ -27,22 +27,22 @@ class Field extends Model
     // Public Properties
     // =========================================================================
 
-    const TYPE_TEXT = 'textField';
-    const TYPE_DATE = 'dateField';
-    const TYPE_TIME = 'timeField';
-    const TYPE_DATETIME = 'dateTimeField';
-    const TYPE_SELECT = 'selectField';
-    const TYPE_MULTISELECT = 'multiselectField';
-    const TYPE_COLOR = 'colorField';
-    const TYPE_TEXTAREA = 'textareaField';
-    const TYPE_CHECKBOX = 'checkboxField';
-    const TYPE_CHECKBOX_GROUP = 'checkboxGroupField';
-    const TYPE_CHECKBOX_SELECT = 'checkboxSelectField';
-    const TYPE_RADIO_GROUP = 'radioGroupField';
-    const TYPE_LIGHTSWITCH = 'lightswitchField';
-    const TYPE_EDITABLE_TABLE = 'editableTableField';
-    const TYPE_ELEMENT_SELECT = 'elementSelectField';
-    const TYPE_AUTOSUGGEST = 'autosuggestField';
+    public const TYPE_TEXT = 'textField';
+    public const TYPE_DATE = 'dateField';
+    public const TYPE_TIME = 'timeField';
+    public const TYPE_DATETIME = 'dateTimeField';
+    public const TYPE_SELECT = 'selectField';
+    public const TYPE_MULTISELECT = 'multiselectField';
+    public const TYPE_COLOR = 'colorField';
+    public const TYPE_TEXTAREA = 'textareaField';
+    public const TYPE_CHECKBOX = 'checkboxField';
+    public const TYPE_CHECKBOX_GROUP = 'checkboxGroupField';
+    public const TYPE_CHECKBOX_SELECT = 'checkboxSelectField';
+    public const TYPE_RADIO_GROUP = 'radioGroupField';
+    public const TYPE_LIGHTSWITCH = 'lightswitchField';
+    public const TYPE_EDITABLE_TABLE = 'editableTableField';
+    public const TYPE_ELEMENT_SELECT = 'elementSelectField';
+    public const TYPE_AUTOSUGGEST = 'autosuggestField';
 
     public bool $first = false;
     public array $config = [];

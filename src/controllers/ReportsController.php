@@ -38,7 +38,6 @@ class ReportsController extends Controller
 
         if (!isset($permissions[ $action->id ])) {
             return parent::beforeAction($action);
-
         }
 
         $users = Craft::$app->getUser();

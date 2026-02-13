@@ -14,7 +14,7 @@
  * @since     1.0.0
  */
 return [
-    'craft-reports'         => 'Reports',
+    'craft-reports' => 'Reports',
     'Reports plugin loaded' => 'Reports plugin loaded',
     'Create Reports' => 'Create Reports',
     'Run Reports' => 'Run Reports',

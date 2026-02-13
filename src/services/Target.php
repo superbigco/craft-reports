@@ -243,8 +243,8 @@ class Target extends Component
             $record = new TargetRecord();
         }
 
-        $record->name        = $report->name;
-        $record->handle      = $report->handle;
+        $record->name = $report->name;
+        $record->handle = $report->handle;
         $record->targetClass = $report->targetClass;
         $record->settings = $report->settings;
         $db = Craft::$app->getDb();
