@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2019 Superbig
  */
 
-namespace superbig\reports\assetbundles\Reports;
+namespace superbig\reports\assetbundles\reports;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
