@@ -1,129 +1,144 @@
-# Reports plugin for Craft CMS 3.x
+# Reports for Craft CMS 5
 
-Write reports with Twig.
-
-![Icon](resources/icon.png)
+Write data reports in Twig and deliver them via email, CSV export, or queue jobs.
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0 or later.
+- Craft CMS 5.5+
+- PHP 8.2+
 
 ## Installation
 
-To install the plugin, follow these instructions.
-
-1. Open your terminal and go to your Craft project:
-
-        cd /path/to/project
-
-2. Then tell Composer to load the plugin:
-
-        composer require superbig/craft-reports
-
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Reports.
-
-## Reports Overview
-
-Reports for Craft CMS and Craft Commerce makes it possible to write reports in Twig via a simple, fluent API.
-
-It also makes it possible to setup report targets like email and (soon) Slack.
-
-This way you can send reports directly to your target channels, either on demands or (soon) on a schedule.
-
-## Configuring Reports
-
-You can override the options with a config file called reports.php:
-
-```php
-<?php
-return [
-    'enableScheduler' => true,
-    'helpers'          => [
-        'formatUsers' => function($users) {
-            /** @var \craft\elements\User[] $user */
-        }
-    ],
-];
+```bash
+composer require superbig/craft-reports
 ```
 
-## Using Reports
+Then install the plugin from the Craft Control Panel or run:
 
-You may use includes both for the Report Content and Settings fields.
-
-The content Twig will be passed the following variables:
-
-- `result` - a `ReportResult` model behind the scenes  
-- `report` - a `Report` model behind the scenes
-
-### Report Example
-
-To generate a list of users that has logged in the last 30 days:
-
-```twig
-{% set loginPeriod = now|date_modify('-30 days') %}
-{% set users = craft.users.lastLoginDate('> ' ~ loginPeriod|atom).all() %}
-
-{% if result is defined %}
-    {% do result.setHeader(['Username', 'Name', 'Email']) %}
-    {% for user in users %}
-        {% do result.append([user.username, user.getName(), user.email ]) %}
-    {% endfor %}
-{% endif %}
+```bash
+./craft plugin/install reports
 ```
 
-### Report Target Example
+## Quick Start
 
-Report targets makes it possible to send the result of a report to target channels.
+1. Go to **Reports** in the CP sidebar
+2. Click **New** and give your report a name and handle
+3. Write your report in Twig using the `result` variable:
 
-For now, email is supported, with Slack and more coming soon.
-
-Example email body:
 ```twig
-Report generated for {{ target.name }}<br>
-This report includes:<br><br>
+{% set users = craft.users.lastLoginDate('> ' ~ now|date_modify('-30 days')|atom).all() %}
 
-{% for report in reports %}
-- {{ report.name }}<br>
+{% do result.setHeader(['Username', 'Name', 'Email']) %}
+{% for user in users %}
+    {% do result.append([user.username, user.getName(), user.email]) %}
 {% endfor %}
 ```
 
-Note that you have access to both the reports attached to the target and the target itself.
+4. Click **Run** to see the output, or **Export** to download as CSV
 
-## Running report targets through Craft's console command
+## Configuration
 
-You can run any report targets through the console with the following command
+Create a `config/reports.php` file to override defaults:
 
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableScheduler` | `bool` | `true` | Enable the report scheduler |
+| `helpers` | `array` | `[]` | Custom helper functions available in report templates |
+| `pluginName` | `string` | `'Reports'` | Override the plugin name in the CP |
+
+```php
+<?php
+
+return [
+    'enableScheduler' => true,
+    'pluginName' => 'Reports',
+    'helpers' => [],
+];
 ```
-./craft reports/default/run-target targetHandle
-``` 
 
-The command can also receive the target's ID.
+## Writing Reports
 
-This way of running report targets is particularly useful if you want to run it from a cron job, or you have bigger reports that require more memory or runs longer than a normal web request can handle. 
+Report templates receive two variables:
 
-## Reports Roadmap
+- **`result`** — a `ReportResult` model for building tabular output
+- **`report`** — the `Report` model for the current report
 
-Some things to do, and ideas for potential features:
+### ReportResult API
 
-- [x] Port Craft 2 version
-- [x] Chainable content API
-- [ ] Document content API
-- [ ] Document report targets
-- [ ] Fields support
-- [ ] Charts support
-- [ ] Widget support
-- [ ] Scheduled reports
-- [x] Email as report target
-- [ ] Slack as report target
-- [ ] Event for registering report target
-- [ ] Template helpers
-- [ ] Document helpers
-- [ ] Report sources (think Slack slash command or CraftQL)
-- [x] Run report targets via cli
-- [x] Report targets dropdown in Reports index
-- [x] Override title
-- [x] Use queue job when running report targets
-- [x] Screenshots
-- [x] Permissions (Create, View, Export, Run, Delete)
+| Method | Description |
+|--------|-------------|
+| `result.setHeader(array)` | Set column headers |
+| `result.append(array)` | Add a row (or array of rows) |
+| `result.setFilename(string)` | Set the CSV export filename |
+| `result.setContent(array)` | Replace all rows |
+| `result.getHeader()` | Get current headers |
+| `result.getContent()` | Get all rows |
+
+### Example: Commerce Orders
+
+```twig
+{% set orders = craft.orders.dateOrdered('> ' ~ now|date_modify('-7 days')|atom).all() %}
+
+{% do result.setHeader(['Order #', 'Email', 'Total', 'Date']) %}
+{% do result.setFilename('weekly-orders') %}
+{% for order in orders %}
+    {% do result.append([order.number, order.email, order.totalPrice|currency, order.dateOrdered|date]) %}
+{% endfor %}
+```
+
+## Report Targets
+
+Report targets deliver report results to external channels. Currently supported:
+
+- **Email** — Send report results as CSV attachments
+
+### Setting Up an Email Target
+
+1. Go to **Reports → Report Targets**
+2. Click **New**, select **Email** as the target type
+3. Configure recipients and email body template
+4. Connect one or more reports to the target
+
+The email body template has access to `reports` (connected reports) and `target` (the target model):
+
+```twig
+Report generated for {{ target.name }}
+
+{% for report in reports %}
+- {{ report.name }}
+{% endfor %}
+```
+
+## Console Commands
+
+Run report targets from the CLI — useful for cron jobs or long-running reports:
+
+```bash
+# Run by handle
+./craft reports/default/run-target weekly-summary
+
+# Run by ID
+./craft reports/default/run-target 5
+
+# List all targets
+./craft reports/default/list-targets
+```
+
+## Permissions
+
+| Permission | Description |
+|-----------|-------------|
+| Run Reports | View and run reports |
+| Manage Reports | Create, edit, and delete reports |
+| Manage Export Targets | Create, edit, and manage report targets |
+
+## Breaking Changes (v3.0.0)
+
+- Requires Craft 5.5+ and PHP 8.2+
+- `mobileGrade` method removed (if referenced in custom code)
+- `FILTER_SANITIZE_STRING` replaced (PHP 8.2 removal)
+- Widget `iconPath()` removed (Craft 5 change)
+
+---
 
 Brought to you by [Superbig](https://superbig.co)
