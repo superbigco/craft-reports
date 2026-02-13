@@ -76,7 +76,7 @@ class Report extends Component
     }
 
     /**
-     * @param Report $report
+     * @param ReportModel $report
      *
      * @throws Exception
      * @throws \yii\base\Exception

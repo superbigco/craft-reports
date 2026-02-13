@@ -24,8 +24,7 @@ class ReportSettings extends Model
     // Public Properties
     // =========================================================================
 
-    /**  @var Fields */
-    public $fields;
+    public ?Fields $fields = null;
 
     // Public Methods
     // =========================================================================
@@ -52,6 +51,6 @@ class ReportSettings extends Model
 
     public function hasFields(): bool
     {
-        return (is_countable($this->getFields()->fields) ? count($this->getFields()->fields) : 0) > 0;
+        return count($this->getFields()->fields) > 0;
     }
 }

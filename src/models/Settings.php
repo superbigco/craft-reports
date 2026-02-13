@@ -11,6 +11,7 @@ class Settings extends Model
     public bool $enableScheduler = true;
     public array $helpers = [];
     public string $pluginName = 'Reports';
+    public string $emailPath = '';
 
     public function rules(): array
     {

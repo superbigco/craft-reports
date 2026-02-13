@@ -26,7 +26,7 @@ use yii\base\Exception;
 class ExportJob extends BaseJob
 {
     public int $targetId;
-    private ReportTarget $_target;
+    private ?ReportTarget $_target = null;
 
     public function execute($queue): void
     {

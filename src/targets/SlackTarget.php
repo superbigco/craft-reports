@@ -60,7 +60,7 @@ class SlackTarget extends ReportTarget
      */
     public function formatMessage(array $reports)
     {
-        return collect($reports)->map(function (Report $report) {
+        return collect($reports)->map(function(Report $report) {
             return $report->name;
         })->implode(', ');
     }

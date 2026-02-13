@@ -17,7 +17,7 @@ trait UserPermissionsTrait
         Event::on(
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
-            function (RegisterUserPermissionsEvent $event): void {
+            function(RegisterUserPermissionsEvent $event): void {
                 $event->permissions[] = [
                     'heading' => $this->name,
                     'permissions' => $this->_getPermissions(),
@@ -54,8 +54,8 @@ trait UserPermissionsTrait
             ],
         ];
 
-        $checkPermissions = function (array $permissions) use ($currentUser): bool {
-            $results = array_map(function ($permission) use ($currentUser) {
+        $checkPermissions = function(array $permissions) use ($currentUser): bool {
+            $results = array_map(function($permission) use ($currentUser) {
                 return $currentUser->can($permission);
             }, $permissions);
 

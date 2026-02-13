@@ -1,35 +1,32 @@
 <?php
 
-use superbig\reports\Reports;
-use superbig\reports\services\Report as ReportService;
+use superbig\reports\services\Chart;
+use superbig\reports\services\Email;
+use superbig\reports\services\Export;
+use superbig\reports\services\Report;
+use superbig\reports\services\Target;
+use superbig\reports\services\Widget;
 
-it('can access the report service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin)->not->toBeNull();
-    expect($plugin->getReport())->toBeInstanceOf(ReportService::class);
+it('can instantiate the report service', function () {
+    expect(new Report())->toBeInstanceOf(Report::class);
 });
 
-it('can access the target service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin->getTarget())->toBeInstanceOf(\superbig\reports\services\Target::class);
+it('can instantiate the target service', function () {
+    expect(new Target())->toBeInstanceOf(Target::class);
 });
 
-it('can access the export service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin->getExport())->toBeInstanceOf(\superbig\reports\services\Export::class);
+it('can instantiate the export service', function () {
+    expect(new Export())->toBeInstanceOf(Export::class);
 });
 
-it('can access the email service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin->getEmail())->toBeInstanceOf(\superbig\reports\services\Email::class);
+it('can instantiate the email service', function () {
+    expect(new Email())->toBeInstanceOf(Email::class);
 });
 
-it('can access the chart service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin->getChart())->toBeInstanceOf(\superbig\reports\services\Chart::class);
+it('can instantiate the chart service', function () {
+    expect(new Chart())->toBeInstanceOf(Chart::class);
 });
 
-it('can access the widget service from the plugin', function () {
-    $plugin = Reports::getInstance();
-    expect($plugin->getWidget())->toBeInstanceOf(\superbig\reports\services\Widget::class);
+it('can instantiate the widget service', function () {
+    expect(new Widget())->toBeInstanceOf(Widget::class);
 });

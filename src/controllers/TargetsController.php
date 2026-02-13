@@ -132,8 +132,6 @@ class TargetsController extends Controller
     }
 
     /**
-     * @param int|null $id
-     *
      * @return \yii\web\Response
      * @throws \craft\errors\MissingComponentException
      * @throws \yii\base\Exception

@@ -11,7 +11,6 @@
 namespace superbig\reports\migrations;
 
 use Craft;
-use craft\config\DbConfig;
 use craft\db\Migration;
 use superbig\reports\records\ReportsRecord;
 
@@ -133,37 +132,20 @@ class Install extends Migration
         return $tablesCreated;
     }
 
-    /**
-     * @return void
-     */
-    protected function createIndexes()
+    protected function createIndexes(): void
     {
         $this->createIndex(
-            $this->db->getIndexName(
-                ReportsRecord::tableName(),
-                'some_field',
-                true
-            ),
+            null,
             ReportsRecord::tableName(),
             'some_field',
             true
         );
-        // Additional commands depending on the db driver
-        switch ($this->driver) {
-            case DbConfig::DRIVER_MYSQL:
-                break;
-            case DbConfig::DRIVER_PGSQL:
-                break;
-        }
     }
 
-    /**
-     * @return void
-     */
-    protected function addForeignKeys()
+    protected function addForeignKeys(): void
     {
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsRecord::tableName(), 'siteId'),
+            null,
             ReportsRecord::tableName(),
             'siteId',
             '{{%sites}}',
@@ -173,7 +155,7 @@ class Install extends Migration
         );
 
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'reportId'),
+            null,
             ReportsTargetsRecord::tableName(),
             'reportId',
             ReportsRecord::tableName(),
@@ -183,7 +165,7 @@ class Install extends Migration
         );
 
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'targetId'),
+            null,
             ReportsTargetsRecord::tableName(),
             'targetId',
             TargetRecord::tableName(),

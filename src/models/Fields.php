@@ -29,7 +29,8 @@ class Fields extends Model
     // Public Properties
     // =========================================================================
 
-    public $fields = [];
+    public array $fields = [];
+    public array $content = [];
     public Report $report;
 
     public function setReport(Report $report): static

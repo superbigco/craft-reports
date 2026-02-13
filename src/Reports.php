@@ -63,7 +63,7 @@ class Reports extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            static function (RegisterUrlRulesEvent $event): void {
+            static function(RegisterUrlRulesEvent $event): void {
                 $event->rules['reports/schedule/run'] = 'reports/schedule/run';
             }
         );
@@ -71,7 +71,7 @@ class Reports extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event): void {
+            function(RegisterUrlRulesEvent $event): void {
                 $event->rules = array_merge($event->rules, $this->getCpRoutes());
             }
         );
@@ -79,7 +79,7 @@ class Reports extends Plugin
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
-            static function (Event $event): void {
+            static function(Event $event): void {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
                 $variable->set('reports', ReportsVariable::class);
@@ -89,7 +89,7 @@ class Reports extends Plugin
         Event::on(
             Dashboard::class,
             Dashboard::EVENT_REGISTER_WIDGET_TYPES,
-            static function (RegisterComponentTypesEvent $event): void {
+            static function(RegisterComponentTypesEvent $event): void {
                 $event->types[] = ReportsWidgetWidget::class;
             }
         );

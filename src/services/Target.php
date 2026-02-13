@@ -122,7 +122,7 @@ class Target extends Component
     }
 
     /**
-     * @return array<int, ReportTarget>
+     * @return array<int, ReportTargetModel>
      */
     public function getConnectedTargetsForReport(\superbig\reports\models\Report $report): array
     {

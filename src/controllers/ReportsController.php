@@ -95,7 +95,7 @@ class ReportsController extends Controller
 
         Craft::$app->getView()->registerAssetBundle(ResultAsset::class);
 
-        /** @var Report $report */
+        /** @var Report|null $report */
         $report = Reports::getInstance()->getReport()->getReportById($reportId);
 
         if (!$report) {
