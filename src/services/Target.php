@@ -178,7 +178,7 @@ class Target extends Component
             ->column();
 
         return array_filter(
-            Reports::$plugin->getReport()->getAllReports(),
+            Reports::getInstance()->getReport()->getAllReports(),
             static fn(\superbig\reports\models\Report $report): bool => \in_array($report->id, $reportIds, false));
     }
 

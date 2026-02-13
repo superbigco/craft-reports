@@ -55,7 +55,7 @@ class EmailTarget extends ReportTarget
         $message->setHtmlBody($body);
 
         foreach ($reports as $report) {
-            $info = Reports::$plugin->getExport()->csv($report);
+            $info = Reports::getInstance()->getExport()->csv($report);
 
             $path = $info['path'];
 

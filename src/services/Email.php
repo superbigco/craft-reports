@@ -36,7 +36,7 @@ class Email extends Component
         ];
 
         $originalLanguage = Craft::$app->language;
-        $templatePath = Reports::$plugin->getSettings()->emailPath;
+        $templatePath = Reports::getInstance()->getSettings()->emailPath;
         $view = Craft::$app->getView();
         $oldTemplateMode = $view->getTemplateMode();
         Craft::$app->language = $originalLanguage;

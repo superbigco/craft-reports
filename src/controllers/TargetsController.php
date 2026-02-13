@@ -77,7 +77,7 @@ class TargetsController extends Controller
     public function actionIndex(): \yii\web\Response
     {
         return $this->renderTemplate('reports/_targets/index', [
-            'targets' => Reports::$plugin->getTarget()->getAllReportTargets(),
+            'targets' => Reports::getInstance()->getTarget()->getAllReportTargets(),
         ]);
     }
 
@@ -88,19 +88,19 @@ class TargetsController extends Controller
         return $this->renderTemplate('reports/_targets/edit', [
             'target' => $target,
             'reportOptions' => $this->_getReportOptions(),
-            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
+            'connectedReportIds' => Reports::getInstance()->getTarget()->getConnectedReportIds($target),
             'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
 
     public function actionEdit(int $id = null)
     {
-        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
 
         return $this->renderTemplate('reports/_targets/edit', [
             'target' => $target,
             'reportOptions' => $this->_getReportOptions(),
-            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
+            'connectedReportIds' => Reports::getInstance()->getTarget()->getConnectedReportIds($target),
             'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
@@ -115,8 +115,8 @@ class TargetsController extends Controller
      */
     public function actionRun(int $id = null)
     {
-        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
-        $result = Reports::$plugin->getTarget()->runReportTarget($id);
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
+        $result = Reports::getInstance()->getTarget()->runReportTarget($id);
 
         if (!$result) {
             $error = 'Failed to run ' . $target->name;
@@ -157,7 +157,7 @@ class TargetsController extends Controller
 
         $request = Craft::$app->getRequest();
         $id = $request->getParam('id');
-        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
 
         if (!$target) {
             $target = new ReportTarget();
@@ -170,7 +170,7 @@ class TargetsController extends Controller
         $connectedReportIds  = $request->getParam('connectedReportIds', []);
 
         // Save it
-        if (!Reports::$plugin->getTarget()->saveReportTarget($target)) {
+        if (!Reports::getInstance()->getTarget()->saveReportTarget($target)) {
             Craft::$app->getUrlManager()->setRouteParams([
                 'target' => $target,
             ]);
@@ -182,7 +182,7 @@ class TargetsController extends Controller
             $connectedReportIds = [];
         }
 
-        Reports::$plugin->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
+        Reports::getInstance()->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
 
         $notice = Craft::t(
             'reports',
@@ -199,7 +199,7 @@ class TargetsController extends Controller
         $id = Craft::$app->getRequest()->getRequiredParam('id');
 
         return $this->asJson([
-            'success' => Reports::$plugin->getTarget()->deleteReportTarget($id),
+            'success' => Reports::getInstance()->getTarget()->deleteReportTarget($id),
         ]);
     }
 
@@ -209,12 +209,12 @@ class TargetsController extends Controller
     private function _editView(ReportTarget $target)
     {
         // Get the target types
-        $allTargetTypes = Reports::$plugin->getTarget()->getTargetTypes();
+        $allTargetTypes = Reports::getInstance()->getTarget()->getTargetTypes();
         $selectedDefinition = array_merge(
             $target->settings[ $target->targetClass ] ?? [],
             ['type' => $target->targetClass]
         );
-        $selectedType = Reports::$plugin->getTarget()->createTargetType($selectedDefinition);
+        $selectedType = Reports::getInstance()->getTarget()->createTargetType($selectedDefinition);
         $targetOptions = [];
 
         /** @var ReportTargetInterface $class */
@@ -241,9 +241,9 @@ class TargetsController extends Controller
             );
 
             return Template::raw($result);
-        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig\Error\LoaderError $e) {
             Craft::error($e->getMessage(), __METHOD__);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::error($e->getMessage(), __METHOD__);
         }
 
@@ -259,7 +259,7 @@ class TargetsController extends Controller
                     'value' => $report->id,
                 ];
             },
-            Reports::$plugin->getReport()->getAllReports()
+            Reports::getInstance()->getReport()->getAllReports()
         );
     }
 }

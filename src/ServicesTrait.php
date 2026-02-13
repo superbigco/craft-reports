@@ -1,12 +1,6 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports;
 
@@ -19,7 +13,7 @@ use superbig\reports\services\Widget;
 
 trait ServicesTrait
 {
-    public function initServices()
+    public function initServices(): void
     {
         $this->setComponents([
             'email' => Email::class,

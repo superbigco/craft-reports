@@ -36,8 +36,8 @@ class ExportJob extends BaseJob
             $this->setProgress($queue, $step);
         };
 
-        // $target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
-        $result = Reports::$plugin->getTarget()->runReportTarget($this->targetId);
+        // $target = Reports::getInstance()->getTarget()->getReportTargetById($this->targetId);
+        $result = Reports::getInstance()->getTarget()->runReportTarget($this->targetId);
 
         if (!$result) {
             throw new Exception('Failed to run export target');
@@ -54,7 +54,7 @@ class ExportJob extends BaseJob
     public function getTarget(): ReportTarget|null
     {
         if (!$this->_target) {
-            $this->_target = Reports::$plugin->getTarget()->getReportTargetById($this->targetId);
+            $this->_target = Reports::getInstance()->getTarget()->getReportTargetById($this->targetId);
         }
 
         return $this->_target;

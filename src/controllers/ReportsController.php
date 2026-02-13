@@ -57,7 +57,7 @@ class ReportsController extends Controller
     public function actionIndex(): \yii\web\Response
     {
         return $this->renderTemplate('reports/reports/index', [
-            'reports' => Reports::$plugin->getReport()->getAllReports(),
+            'reports' => Reports::getInstance()->getReport()->getAllReports(),
         ]);
     }
 
@@ -73,7 +73,7 @@ class ReportsController extends Controller
 
     public function actionEdit(int $id = null)
     {
-        $report = Reports::$plugin->getReport()->getReportById($id);
+        $report = Reports::getInstance()->getReport()->getReportById($id);
 
         return $this->renderTemplate('reports/reports/edit', [
             'report' => $report,
@@ -96,7 +96,7 @@ class ReportsController extends Controller
         Craft::$app->getView()->registerAssetBundle(ResultAsset::class);
 
         /** @var Report $report */
-        $report = Reports::$plugin->getReport()->getReportById($reportId);
+        $report = Reports::getInstance()->getReport()->getReportById($reportId);
 
         if (!$report) {
             throw new NotFoundHttpException();
@@ -128,8 +128,8 @@ class ReportsController extends Controller
     public function actionExport(int $id = null)
     {
         /** @var Report $report */
-        $report = Reports::$plugin->getReport()->getReportById($id);
-        $info = Reports::$plugin->getExport()->csv($report);
+        $report = Reports::getInstance()->getReport()->getReportById($id);
+        $info = Reports::getInstance()->getExport()->csv($report);
 
         return Craft::$app->getResponse()->sendFile($info['path'], $info['filename'], [
             'mimeType' => $info['mimeType'],
@@ -143,7 +143,7 @@ class ReportsController extends Controller
 
         $request = Craft::$app->getRequest();
         $id = $request->getParam('id');
-        $report = Reports::$plugin->getReport()->getReportById($id);
+        $report = Reports::getInstance()->getReport()->getReportById($id);
 
         if (!$report) {
             $report = new Report();
@@ -156,7 +156,7 @@ class ReportsController extends Controller
         $report->settings = $request->getParam('settings');
 
         // Save it
-        if (!Reports::$plugin->getReport()->saveReport($report)) {
+        if (!Reports::getInstance()->getReport()->saveReport($report)) {
             Craft::$app->getUrlManager()->setRouteParams([
                 'report' => $report,
             ]);
@@ -179,7 +179,7 @@ class ReportsController extends Controller
         $id = Craft::$app->getRequest()->getRequiredParam('id');
 
         return $this->asJson([
-            'success' => Reports::$plugin->getReport()->deleteReport($id),
+            'success' => Reports::getInstance()->getReport()->deleteReport($id),
         ]);
     }
 }

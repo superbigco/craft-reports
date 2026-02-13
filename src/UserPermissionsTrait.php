@@ -1,12 +1,6 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports;
 
@@ -18,12 +12,12 @@ use yii\base\Event;
 
 trait UserPermissionsTrait
 {
-    public function initPermissions()
+    public function initPermissions(): void
     {
         Event::on(
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
-            function(RegisterUserPermissionsEvent $event) {
+            function (RegisterUserPermissionsEvent $event): void {
                 $event->permissions[] = [
                     'heading' => $this->name,
                     'permissions' => $this->_getPermissions(),
@@ -32,10 +26,7 @@ trait UserPermissionsTrait
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
@@ -63,8 +54,8 @@ trait UserPermissionsTrait
             ],
         ];
 
-        $checkPermissions = function($permissions) use ($currentUser) {
-            $results = array_map(function($permission) use ($currentUser) {
+        $checkPermissions = function (array $permissions) use ($currentUser): bool {
+            $results = array_map(function ($permission) use ($currentUser) {
                 return $currentUser->can($permission);
             }, $permissions);
 
@@ -72,10 +63,12 @@ trait UserPermissionsTrait
         };
 
         foreach ($permissions as $permission) {
-            $canAccess = !\is_array($permission['type']) ? $currentUser->can($permission['type']) : $checkPermissions($permission['type']);
+            $canAccess = !\is_array($permission['type'])
+                ? $currentUser->can($permission['type'])
+                : $checkPermissions($permission['type']);
 
             if ($canAccess) {
-                $subNav[ $permission['id'] ] = $permission['config'];
+                $subNav[$permission['id']] = $permission['config'];
             }
         }
 
@@ -86,7 +79,10 @@ trait UserPermissionsTrait
         return $navItem;
     }
 
-    private function _getPermissions()
+    /**
+     * @return array<string, array{label: string}>
+     */
+    private function _getPermissions(): array
     {
         $permissions = [
             Reports::PERMISSION_RUN_REPORTS => 'Run Reports',
@@ -97,7 +93,7 @@ trait UserPermissionsTrait
         $result = [];
 
         foreach ($permissions as $key => $label) {
-            $result[ $key ] = ['label' => Craft::t('reports', $label)];
+            $result[$key] = ['label' => Craft::t('reports', $label)];
         }
 
         return $result;

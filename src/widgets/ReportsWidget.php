@@ -1,55 +1,20 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports\widgets;
 
 use Craft;
 use craft\base\Widget;
-
 use superbig\reports\assetbundles\reportswidgetwidget\ReportsWidgetWidgetAsset;
-use superbig\reports\Reports;
 
-/**
- * Reports Widget
- *
- * @author    Superbig
- * @package   Reports
- * @since     1.0.0
- */
 class ReportsWidget extends Widget
 {
-    // Public Properties
-    // =========================================================================
+    public string $message = 'Hello, world.';
 
-    /**
-     * @var string
-     */
-    public $message = 'Hello, world.';
-
-    // Static Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
     public static function displayName(): string
     {
         return Craft::t('reports', 'ReportsWidget');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function iconPath()
-    {
-        return Craft::getAlias("@superbig/reports/assetbundles/reportswidgetwidget/dist/img/ReportsWidget-icon.svg");
     }
 
     public static function maxColspan(): ?int
@@ -60,14 +25,14 @@ class ReportsWidget extends Widget
     public function rules(): array
     {
         $rules = parent::rules();
-        $rules = array_merge(
+
+        return array_merge(
             $rules,
             [
                 ['message', 'string'],
                 ['message', 'default', 'value' => 'Hello, world.'],
             ]
         );
-        return $rules;
     }
 
     public function getSettingsHtml(): ?string

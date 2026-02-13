@@ -80,11 +80,9 @@ class Field extends Model
         ];
     }
 
-    public function renderField()
+    public function renderField(): \Twig\Markup
     {
-        $html = Craft::$app->getView()->renderTemplateMacro('_includes/forms', $this->type, [
-            'config' => $this->config,
-        ]);
+        $html = Craft::$app->getView()->renderTemplate('_includes/forms/' . $this->type, $this->config);
 
         return Template::raw($html);
     }

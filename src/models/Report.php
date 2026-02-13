@@ -1,35 +1,23 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports\models;
 
 use Craft;
-
 use craft\base\Model;
 use superbig\reports\Reports;
 
-/**
- * @author    Superbig
- * @package   Reports
- * @since     1.0.0
- */
 class Report extends Model
 {
-    public $id;
-    public $siteId;
-    public string $name;
-    public string $handle;
-    public string $content;
-    public string $settings;
-    public $fieldValues;
-    public \DateTime $dateLastRun;
+    public ?int $id = null;
+    public ?int $siteId = null;
+    public string $name = '';
+    public string $handle = '';
+    public string $content = '';
+    public string $settings = '';
+    public mixed $fieldValues = null;
+    public ?\DateTime $dateLastRun = null;
 
     /** @var array<int, ReportTarget> */
     private array $_targets;
@@ -43,20 +31,23 @@ class Report extends Model
 
     public function run(): ReportResult
     {
-        return Reports::$plugin->getReport()->runReport($this);
+        return Reports::getInstance()->getReport()->runReport($this);
     }
 
-    public function reportSettings()
+    public function reportSettings(): ReportSettings
     {
-        return Reports::$plugin->getReport()->settingsForReport($this);
+        return Reports::getInstance()->getReport()->settingsForReport($this);
     }
 
-    public function getConnectedTargets()
+    /**
+     * @return ReportTarget[]
+     */
+    public function getConnectedTargets(): array
     {
-        return $this->_targets ??= Reports::$plugin->getTarget()->getConnectedTargetsForReport($this);
+        return $this->_targets ??= Reports::getInstance()->getTarget()->getConnectedTargetsForReport($this);
     }
 
-    public function canManage()
+    public function canManage(): bool
     {
         return Craft::$app->getUser()->checkPermission(Reports::PERMISSION_MANAGE_REPORTS);
     }
