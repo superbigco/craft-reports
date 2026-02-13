@@ -27,7 +27,6 @@ use superbig\reports\services\Email as EmailService;
 use superbig\reports\services\Report as ReportService;
 use superbig\reports\services\Target;
 use superbig\reports\services\Widget as WidgetService;
-use superbig\reports\twigextensions\ReportsTwigExtension;
 use superbig\reports\variables\ReportsVariable;
 use superbig\reports\widgets\ReportsWidget as ReportsWidgetWidget;
 
@@ -65,39 +64,6 @@ class Reports extends Plugin
     public function getPluginName()
     {
         return Craft::t('reports', $this->getSettings()->pluginName);
-    }
-
-    public function getCpNavItem()
-    {
-        $navItem          = parent::getCpNavItem();
-        $navItem['label'] = $this->getPluginName();
-
-        return $navItem;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getCpNavItem(): array
-    {
-        $navItem = parent::getCpNavItem();
-        $navItem['label'] = $this->getPluginName();
-
-        if (Craft::$app->getUser()->checkPermission(self::PERMISSION_MANAGE_REPORTS) || Craft::$app->getUser()->checkPermission(self::PERMISSION_RUN_REPORTS)) {
-            $navItem['subnav']['reports'] = [
-                'label' => Craft::t('reports', 'Reports'),
-                'url' => 'reports',
-            ];
-        }
-
-        if (Craft::$app->getUser()->checkPermission(self::PERMISSION_MANAGE_TARGETS)) {
-            $navItem['subnav']['targets'] = [
-                'label' => Craft::t('reports', 'Report Targets'),
-                'url' => 'reports/targets',
-            ];
-        }
-
-        return $navItem;
     }
 
     /**
