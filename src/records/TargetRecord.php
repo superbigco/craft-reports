@@ -10,10 +10,9 @@
 
 namespace superbig\reports\records;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\db\ActiveRecord;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -34,7 +33,7 @@ class TargetRecord extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%reports_targets}}';
     }

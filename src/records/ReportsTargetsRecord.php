@@ -29,7 +29,7 @@ class ReportsTargetsRecord extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%reports_targets_reports}}';
     }

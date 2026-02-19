@@ -10,16 +10,16 @@
 
 namespace superbig\reports\controllers;
 
+use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use craft\web\Controller;
 use superbig\reports\jobs\ExportJob;
 use superbig\reports\models\Report;
+
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
-
-use Craft;
-use craft\web\Controller;
 use superbig\reports\targets\ReportTargetInterface;
 use yii\web\ForbiddenHttpException;
 
@@ -30,7 +30,6 @@ use yii\web\ForbiddenHttpException;
  */
 class TargetsController extends Controller
 {
-
     // Protected Properties
     // =========================================================================
 
@@ -40,35 +39,36 @@ class TargetsController extends Controller
      * @return bool
      * @throws \yii\web\ForbiddenHttpException
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $permissions = [
             // Allow users that can run reports to also run export targets
             'queue-run' => [Reports::PERMISSION_RUN_REPORTS, Reports::PERMISSION_MANAGE_REPORTS],
-            'run'       => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'run' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
 
-            'index'     => [Reports::PERMISSION_MANAGE_TARGETS],
-            'new'       => [Reports::PERMISSION_MANAGE_TARGETS],
-            'create'    => [Reports::PERMISSION_MANAGE_TARGETS],
-            'save'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'edit'      => [Reports::PERMISSION_MANAGE_TARGETS],
-            'delete'    => [Reports::PERMISSION_MANAGE_TARGETS],
+            'index' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'new' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'create' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'save' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'edit' => [Reports::PERMISSION_MANAGE_TARGETS],
+            'delete' => [Reports::PERMISSION_MANAGE_TARGETS],
         ];
 
-        if (isset($permissions[ $action->id ])) {
-            $users     = Craft::$app->getUser();
-            $checks    = array_map(function($permission) use ($users) {
-                return $users->checkPermission($permission);
-            }, $permissions[ $action->id ]);
-            $canAccess = \in_array(true, $checks);
-
-
-            if (!$canAccess) {
-                throw new ForbiddenHttpException('User is not permitted to perform this action');
-            }
+        if (!isset($permissions[ $action->id ])) {
+            return parent::beforeAction($action);
         }
 
-        return parent::beforeAction($action);
+        $users = Craft::$app->getUser();
+        $checks = array_map(function($permission) use ($users) {
+            return $users->checkPermission($permission);
+        }, $permissions[ $action->id ]);
+        $canAccess = \in_array(true, $checks);
+
+        if (!$canAccess) {
+            throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+
+        return true;
     }
 
     // Public Methods
@@ -77,7 +77,7 @@ class TargetsController extends Controller
     public function actionIndex(): \yii\web\Response
     {
         return $this->renderTemplate('reports/_targets/index', [
-            'targets' => Reports::$plugin->getTarget()->getAllReportTargets(),
+            'targets' => Reports::getInstance()->getTarget()->getAllReportTargets(),
         ]);
     }
 
@@ -86,22 +86,22 @@ class TargetsController extends Controller
         $target = new ReportTarget();
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'             => $target,
-            'reportOptions'      => $this->_getReportOptions(),
-            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
-            'typeSettingsHtml'   => $this->_editView($target),
+            'target' => $target,
+            'reportOptions' => $this->_getReportOptions(),
+            'connectedReportIds' => Reports::getInstance()->getTarget()->getConnectedReportIds($target),
+            'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
 
     public function actionEdit(int $id = null)
     {
-        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
 
         return $this->renderTemplate('reports/_targets/edit', [
-            'target'             => $target,
-            'reportOptions'      => $this->_getReportOptions(),
-            'connectedReportIds' => Reports::$plugin->getTarget()->getConnectedReportIds($target),
-            'typeSettingsHtml'   => $this->_editView($target),
+            'target' => $target,
+            'reportOptions' => $this->_getReportOptions(),
+            'connectedReportIds' => Reports::getInstance()->getTarget()->getConnectedReportIds($target),
+            'typeSettingsHtml' => $this->_editView($target),
         ]);
     }
 
@@ -115,8 +115,8 @@ class TargetsController extends Controller
      */
     public function actionRun(int $id = null)
     {
-        $target = Reports::$plugin->getTarget()->getReportTargetById($id);
-        $result = Reports::$plugin->getTarget()->runReportTarget($id);
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
+        $result = Reports::getInstance()->getTarget()->runReportTarget($id);
 
         if (!$result) {
             $error = 'Failed to run ' . $target->name;
@@ -132,8 +132,6 @@ class TargetsController extends Controller
     }
 
     /**
-     * @param int|null $id
-     *
      * @return \yii\web\Response
      * @throws \craft\errors\MissingComponentException
      * @throws \yii\base\Exception
@@ -141,7 +139,7 @@ class TargetsController extends Controller
      */
     public function actionQueueRun()
     {
-        $id  = Craft::$app->getRequest()->getRequiredParam('id');
+        $id = Craft::$app->getRequest()->getRequiredParam('id');
         $job = new ExportJob([
             'targetId' => $id,
         ]);
@@ -156,21 +154,21 @@ class TargetsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $id      = $request->getParam('id');
-        $target  = Reports::$plugin->getTarget()->getReportTargetById($id);
+        $id = $request->getParam('id');
+        $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
 
         if (!$target) {
             $target = new ReportTarget();
         }
 
-        $target->name        = $request->getParam('name');
-        $target->handle      = $request->getParam('handle');
+        $target->name = $request->getParam('name');
+        $target->handle = $request->getParam('handle');
         $target->targetClass = $request->getParam('targetClass');
-        $target->settings    = $request->getParam('settings');
-        $connectedReportIds  = $request->getParam('connectedReportIds', []);
+        $target->settings = $request->getParam('settings');
+        $connectedReportIds = $request->getParam('connectedReportIds', []);
 
         // Save it
-        if (!Reports::$plugin->getTarget()->saveReportTarget($target)) {
+        if (!Reports::getInstance()->getTarget()->saveReportTarget($target)) {
             Craft::$app->getUrlManager()->setRouteParams([
                 'target' => $target,
             ]);
@@ -182,7 +180,7 @@ class TargetsController extends Controller
             $connectedReportIds = [];
         }
 
-        Reports::$plugin->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
+        Reports::getInstance()->getTarget()->syncTargetReportRelationship($target, $connectedReportIds);
 
         $notice = Craft::t(
             'reports',
@@ -199,7 +197,7 @@ class TargetsController extends Controller
         $id = Craft::$app->getRequest()->getRequiredParam('id');
 
         return $this->asJson([
-            'success' => Reports::$plugin->getTarget()->deleteReportTarget($id),
+            'success' => Reports::getInstance()->getTarget()->deleteReportTarget($id),
         ]);
     }
 
@@ -209,13 +207,13 @@ class TargetsController extends Controller
     private function _editView(ReportTarget $target)
     {
         // Get the target types
-        $allTargetTypes     = Reports::$plugin->getTarget()->getTargetTypes();
+        $allTargetTypes = Reports::getInstance()->getTarget()->getTargetTypes();
         $selectedDefinition = array_merge(
             $target->settings[ $target->targetClass ] ?? [],
             ['type' => $target->targetClass]
         );
-        $selectedType       = Reports::$plugin->getTarget()->createTargetType($selectedDefinition);
-        $targetOptions      = [];
+        $selectedType = Reports::getInstance()->getTarget()->createTargetType($selectedDefinition);
+        $targetOptions = [];
 
         /** @var ReportTargetInterface $class */
         foreach ($allTargetTypes as $class) {
@@ -233,17 +231,17 @@ class TargetsController extends Controller
             $result = Craft::$app->getView()->renderTemplate(
                 'reports/_targets/targetSettings',
                 [
-                    'target'             => $target,
-                    'allTargetTypes'     => $allTargetTypes,
-                    'targetOptions'      => $targetOptions,
+                    'target' => $target,
+                    'allTargetTypes' => $allTargetTypes,
+                    'targetOptions' => $targetOptions,
                     'selectedTargetType' => $selectedType,
                 ]
             );
 
             return Template::raw($result);
-        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig\Error\LoaderError $e) {
             Craft::error($e->getMessage(), __METHOD__);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::error($e->getMessage(), __METHOD__);
         }
 
@@ -259,7 +257,7 @@ class TargetsController extends Controller
                     'value' => $report->id,
                 ];
             },
-            Reports::$plugin->getReport()->getAllReports()
+            Reports::getInstance()->getReport()->getAllReports()
         );
     }
 }

@@ -10,7 +10,6 @@
 
 namespace superbig\reports\assetbundles\result;
 
-use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 

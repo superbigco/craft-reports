@@ -13,12 +13,10 @@ namespace superbig\reports\console\controllers;
 use superbig\reports\models\ReportTarget;
 use superbig\reports\Reports;
 
-use Craft;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\console\widgets\Table;
 use yii\helpers\Console;
-use superbig\reports\records\ReportsTargetsRecord;
 
 /**
  * Default Command
@@ -43,17 +41,16 @@ class DefaultController extends Controller
     public function actionRunTarget($id)
     {
         if (\intval($id)) {
-            $target = Reports::$plugin->getTarget()->getReportTargetById($id);
-        }
-        else {
-            $target = Reports::$plugin->getTarget()->getReportTargetByHandle($id);
+            $target = Reports::getInstance()->getTarget()->getReportTargetById($id);
+        } else {
+            $target = Reports::getInstance()->getTarget()->getReportTargetByHandle($id);
         }
 
         if (!$target) {
             return ExitCode::NOINPUT;
         }
 
-        $result = Reports::$plugin->getTarget()->runReportTarget($target->id);
+        $result = Reports::getInstance()->getTarget()->runReportTarget($target->id);
 
         if (!$result) {
             $error = 'Failed to run ' . $target->name . PHP_EOL;
@@ -75,11 +72,11 @@ class DefaultController extends Controller
      */
     public function actionListTargets()
     {
-        $targets = Reports::$plugin->getTarget()->getAllReportTargets();
-        $table   = (new Table())
+        $targets = Reports::getInstance()->getTarget()->getAllReportTargets();
+        $table = (new Table())
             ->setHeaders(['Name', 'Handle', 'ID', 'Connected reports'])
             ->setRows(array_map(function(ReportTarget $target) {
-                $reportCount = count(Reports::$plugin->getTarget()->getConnectedReportsForTarget($target));
+                $reportCount = count(Reports::getInstance()->getTarget()->getConnectedReportsForTarget($target));
 
                 return [
                     $target->name,

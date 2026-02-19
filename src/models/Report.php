@@ -1,78 +1,53 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
 use Craft;
 use craft\base\Model;
+use superbig\reports\Reports;
 
-/**
- * @author    Superbig
- * @package   Reports
- * @since     1.0.0
- */
 class Report extends Model
 {
-    // Public Properties
-    // =========================================================================
+    public ?int $id = null;
+    public ?int $siteId = null;
+    public string $name = '';
+    public string $handle = '';
+    public string $content = '';
+    public string $settings = '';
+    public mixed $fieldValues = null;
+    public ?\DateTime $dateLastRun = null;
 
-    public  $id;
-    public  $siteId;
-    public  $name;
-    public  $handle;
-    public  $content;
-    public  $settings;
-    public  $fieldValues;
-    public  $dateLastRun;
-    private $_targets;
+    /** @var array<int, ReportTarget> */
+    private array $_targets;
 
-    // Public Methods
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['content', 'settings'], 'string'],
         ];
     }
 
+    public function run(): ReportResult
+    {
+        return Reports::getInstance()->getReport()->runReport($this);
+    }
+
+    public function reportSettings(): ReportSettings
+    {
+        return Reports::getInstance()->getReport()->settingsForReport($this);
+    }
+
     /**
-     * @return ReportResult
-     * @throws \yii\base\Exception
-     * @throws \yii\db\Exception
+     * @return ReportTarget[]
      */
-    public function run()
+    public function getConnectedTargets(): array
     {
-        return Reports::$plugin->getReport()->runReport($this);
+        return $this->_targets ??= Reports::getInstance()->getTarget()->getConnectedTargetsForReport($this);
     }
 
-    public function reportSettings()
-    {
-        return Reports::$plugin->getReport()->settingsForReport($this);
-    }
-
-    public function getConnectedTargets()
-    {
-        if (!$this->_targets) {
-            $this->_targets = Reports::$plugin->getTarget()->getConnectedTargetsForReport($this);
-        }
-
-        return $this->_targets;
-    }
-
-    public function canManage()
+    public function canManage(): bool
     {
         return Craft::$app->getUser()->checkPermission(Reports::PERMISSION_MANAGE_REPORTS);
     }

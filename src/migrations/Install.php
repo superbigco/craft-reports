@@ -10,14 +10,13 @@
 
 namespace superbig\reports\migrations;
 
+use Craft;
+use craft\db\Migration;
 use superbig\reports\records\ReportsRecord;
+
 use superbig\reports\records\ReportsTargetsRecord;
 use superbig\reports\records\TargetRecord;
 use superbig\reports\Reports;
-
-use Craft;
-use craft\config\DbConfig;
-use craft\db\Migration;
 
 /**
  * @author    Superbig
@@ -82,15 +81,15 @@ class Install extends Migration
             $this->createTable(
                 ReportsRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'siteId'      => $this->integer()->notNull(),
-                    'name'        => $this->string(255)->notNull()->defaultValue(''),
-                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
-                    'content'     => $this->longText(),
-                    'settings'    => $this->longText(),
+                    'uid' => $this->uid(),
+                    'siteId' => $this->integer()->notNull(),
+                    'name' => $this->string(255)->notNull()->defaultValue(''),
+                    'handle' => $this->string(255)->notNull()->defaultValue(''),
+                    'content' => $this->longText(),
+                    'settings' => $this->longText(),
                     'fieldValues' => $this->longText(),
                     'dateLastRun' => $this->dateTime()->null(),
                 ]
@@ -103,14 +102,14 @@ class Install extends Migration
             $this->createTable(
                 TargetRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'name'        => $this->string(255)->notNull()->defaultValue(''),
-                    'handle'      => $this->string(255)->notNull()->defaultValue(''),
+                    'uid' => $this->uid(),
+                    'name' => $this->string(255)->notNull()->defaultValue(''),
+                    'handle' => $this->string(255)->notNull()->defaultValue(''),
                     'targetClass' => $this->string(255)->notNull()->defaultValue(''),
-                    'settings'    => $this->text(),
+                    'settings' => $this->text(),
                 ]
             );
         }
@@ -120,12 +119,12 @@ class Install extends Migration
             $this->createTable(
                 ReportsTargetsRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'reportId'    => $this->integer()->notNull(),
-                    'targetId'    => $this->integer()->notNull(),
+                    'uid' => $this->uid(),
+                    'reportId' => $this->integer()->notNull(),
+                    'targetId' => $this->integer()->notNull(),
                 ]
             );
         }
@@ -133,37 +132,20 @@ class Install extends Migration
         return $tablesCreated;
     }
 
-    /**
-     * @return void
-     */
-    protected function createIndexes()
+    protected function createIndexes(): void
     {
         $this->createIndex(
-            $this->db->getIndexName(
-                ReportsRecord::tableName(),
-                'some_field',
-                true
-            ),
+            null,
             ReportsRecord::tableName(),
             'some_field',
             true
         );
-        // Additional commands depending on the db driver
-        switch ($this->driver) {
-            case DbConfig::DRIVER_MYSQL:
-                break;
-            case DbConfig::DRIVER_PGSQL:
-                break;
-        }
     }
 
-    /**
-     * @return void
-     */
-    protected function addForeignKeys()
+    protected function addForeignKeys(): void
     {
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsRecord::tableName(), 'siteId'),
+            null,
             ReportsRecord::tableName(),
             'siteId',
             '{{%sites}}',
@@ -173,7 +155,7 @@ class Install extends Migration
         );
 
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'reportId'),
+            null,
             ReportsTargetsRecord::tableName(),
             'reportId',
             ReportsRecord::tableName(),
@@ -183,7 +165,7 @@ class Install extends Migration
         );
 
         $this->addForeignKey(
-            $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'targetId'),
+            null,
             ReportsTargetsRecord::tableName(),
             'targetId',
             TargetRecord::tableName(),

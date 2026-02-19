@@ -10,10 +10,9 @@
 
 namespace superbig\reports\services;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Component;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -22,15 +21,21 @@ use craft\base\Component;
  */
 class Schedule extends Component
 {
-    const TYPE_TABLE   = 'table';
-    const TYPE_CHART   = 'chart';
-    const TARGET_EMAIL = 'email';
-    const TARGET_SLACK = 'slack';
+    public const TYPE_TABLE = 'table';
+
+    public const TYPE_CHART = 'chart';
+
+    public const TARGET_EMAIL = 'email';
+
+    /**
+     * @var string
+     */
+    public const TARGET_SLACK = 'slack';
 
     public $type;
+
     public $target;
 
     // Public Methods
     // =========================================================================
-
 }

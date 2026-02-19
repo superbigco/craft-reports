@@ -23,17 +23,17 @@ class m190305_191905_add_targets_reports_relationship extends Migration
             $this->createTable(
                 ReportsTargetsRecord::tableName(),
                 [
-                    'id'          => $this->primaryKey(),
+                    'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'reportId'    => $this->integer()->notNull(),
-                    'targetId'    => $this->integer()->notNull(),
+                    'uid' => $this->uid(),
+                    'reportId' => $this->integer()->notNull(),
+                    'targetId' => $this->integer()->notNull(),
                 ]
             );
 
             $this->addForeignKey(
-                $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'reportId'),
+                null,
                 ReportsTargetsRecord::tableName(),
                 'reportId',
                 ReportsRecord::tableName(),
@@ -43,7 +43,7 @@ class m190305_191905_add_targets_reports_relationship extends Migration
             );
 
             $this->addForeignKey(
-                $this->db->getForeignKeyName(ReportsTargetsRecord::tableName(), 'targetId'),
+                null,
                 ReportsTargetsRecord::tableName(),
                 'targetId',
                 TargetRecord::tableName(),

@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 3.0.0 - 2026-02-13
+
+### Added
+- Craft 5 support
+- PHP 8.2+ support
+
+### Fixed
+- Fixed untranslated plugin name
+- Fixed error when no reports are selected in target
+- Fixed Postgres compatibility issues
+
+## 2.0.0-beta
+
+### Added
+- Initial beta release of Craft 4 version
 
 ### Fixed
 - Fixed extra dot in filename

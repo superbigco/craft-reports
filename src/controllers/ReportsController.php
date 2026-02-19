@@ -10,12 +10,12 @@
 
 namespace superbig\reports\controllers;
 
-use superbig\reports\assetbundles\result\ResultAsset;
-use superbig\reports\models\Report;
-use superbig\reports\Reports;
-
 use Craft;
 use craft\web\Controller;
+use superbig\reports\assetbundles\result\ResultAsset;
+
+use superbig\reports\models\Report;
+use superbig\reports\Reports;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -26,50 +26,37 @@ use yii\web\NotFoundHttpException;
  */
 class ReportsController extends Controller
 {
-
-    // Protected Properties
-    // =========================================================================
-
-    /**
-     * @var    bool|array Allows anonymous access to this controller's actions.
-     *         The actions must be in 'kebab-case'
-     * @access protected
-     */
-    protected $allowAnonymous = [];
-
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $permissions = [
-            'index'  => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
-            'run'    => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'index' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+            'run' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
             'create' => [Reports::PERMISSION_MANAGE_REPORTS],
-            'edit'   => [Reports::PERMISSION_MANAGE_REPORTS],
+            'edit' => [Reports::PERMISSION_MANAGE_REPORTS],
             'delete' => [Reports::PERMISSION_MANAGE_REPORTS],
         ];
 
-        if (isset($permissions[ $action->id ])) {
-            $users     = Craft::$app->getUser();
-            $checks    = array_map(function($permission) use ($users) {
-                return $users->checkPermission($permission);
-            }, $permissions[ $action->id ]);
-            $canAccess = \in_array(true, $checks);
-
-
-            if (!$canAccess) {
-                throw new ForbiddenHttpException('User is not permitted to perform this action');
-            }
+        if (!isset($permissions[ $action->id ])) {
+            return parent::beforeAction($action);
         }
 
-        return parent::beforeAction($action);
-    }
+        $users = Craft::$app->getUser();
+        $checks = array_map(function($permission) use ($users) {
+            return $users->checkPermission($permission);
+        }, $permissions[ $action->id ]);
+        $canAccess = \in_array(true, $checks);
 
-    // Public Methods
-    // =========================================================================
+        if (!$canAccess) {
+            throw new ForbiddenHttpException('User is not permitted to perform this action');
+        }
+
+        return true;
+    }
 
     public function actionIndex(): \yii\web\Response
     {
         return $this->renderTemplate('reports/reports/index', [
-            'reports' => Reports::$plugin->getReport()->getAllReports(),
+            'reports' => Reports::getInstance()->getReport()->getAllReports(),
         ]);
     }
 
@@ -78,17 +65,17 @@ class ReportsController extends Controller
         $report = new Report();
 
         $this->renderTemplate('reports/reports/edit', [
-            'report'           => $report,
+            'report' => $report,
             'connectedTargets' => $report->getConnectedTargets(),
         ]);
     }
 
     public function actionEdit(int $id = null)
     {
-        $report = Reports::$plugin->getReport()->getReportById($id);
+        $report = Reports::getInstance()->getReport()->getReportById($id);
 
         return $this->renderTemplate('reports/reports/edit', [
-            'report'           => $report,
+            'report' => $report,
             'connectedTargets' => $report->getConnectedTargets(),
         ]);
     }
@@ -102,13 +89,13 @@ class ReportsController extends Controller
      */
     public function actionRun(int $id = null)
     {
-        $request  = Craft::$app->getRequest();
+        $request = Craft::$app->getRequest();
         $reportId = $id ?? $request->getParam('id');
 
         Craft::$app->getView()->registerAssetBundle(ResultAsset::class);
 
-        /** @var Report $report */
-        $report = Reports::$plugin->getReport()->getReportById($reportId);
+        /** @var Report|null $report */
+        $report = Reports::getInstance()->getReport()->getReportById($reportId);
 
         if (!$report) {
             throw new NotFoundHttpException();
@@ -117,9 +104,9 @@ class ReportsController extends Controller
         $result = $report->run();
 
         $result = $this->renderTemplate('reports/reports/run', [
-            'report'           => $report,
-            'result'           => $result,
-            'hasFields'        => false,
+            'report' => $report,
+            'result' => $result,
+            'hasFields' => false,
             'connectedTargets' => $report->getConnectedTargets(),
         ]);
 
@@ -140,8 +127,8 @@ class ReportsController extends Controller
     public function actionExport(int $id = null)
     {
         /** @var Report $report */
-        $report = Reports::$plugin->getReport()->getReportById($id);
-        $info   = Reports::$plugin->getExport()->csv($report);
+        $report = Reports::getInstance()->getReport()->getReportById($id);
+        $info = Reports::getInstance()->getExport()->csv($report);
 
         return Craft::$app->getResponse()->sendFile($info['path'], $info['filename'], [
             'mimeType' => $info['mimeType'],
@@ -154,21 +141,21 @@ class ReportsController extends Controller
         $this->requirePostRequest();
 
         $request = Craft::$app->getRequest();
-        $id      = $request->getParam('id');
-        $report  = Reports::$plugin->getReport()->getReportById($id);
+        $id = $request->getParam('id');
+        $report = Reports::getInstance()->getReport()->getReportById($id);
 
         if (!$report) {
             $report = new Report();
         }
 
-        $report->siteId   = Craft::$app->getSites()->getPrimarySite()->id;
-        $report->name     = $request->getParam('name');
-        $report->handle   = $request->getParam('handle');
-        $report->content  = $request->getParam('content');
+        $report->siteId = Craft::$app->getSites()->getPrimarySite()->id;
+        $report->name = $request->getParam('name');
+        $report->handle = $request->getParam('handle');
+        $report->content = $request->getParam('content');
         $report->settings = $request->getParam('settings');
 
         // Save it
-        if (!Reports::$plugin->getReport()->saveReport($report)) {
+        if (!Reports::getInstance()->getReport()->saveReport($report)) {
             Craft::$app->getUrlManager()->setRouteParams([
                 'report' => $report,
             ]);
@@ -191,7 +178,7 @@ class ReportsController extends Controller
         $id = Craft::$app->getRequest()->getRequiredParam('id');
 
         return $this->asJson([
-            'success' => Reports::$plugin->getReport()->deleteReport($id),
+            'success' => Reports::getInstance()->getReport()->deleteReport($id),
         ]);
     }
 }

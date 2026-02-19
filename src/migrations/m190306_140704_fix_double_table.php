@@ -4,7 +4,6 @@ namespace superbig\reports\migrations;
 
 use Craft;
 use craft\db\Migration;
-use craft\db\mysql\ColumnSchema;
 use superbig\reports\records\ReportsTargetsRecord;
 
 require_once __DIR__ . '/m190305_191905_add_targets_reports_relationship.php';

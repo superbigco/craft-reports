@@ -31,13 +31,17 @@ class SlackTarget extends ReportTarget
         return \Craft::t('reports', 'Slack');
     }
 
-    public function send(Report $report): bool
+    public function send(\superbig\reports\models\ReportTarget $report, $reports = []): bool
     {
         $client = new Client();
 
+        if (empty($reports)) {
+            return false;
+        }
+
         try {
             $payload = [
-                'text' => $report->name,
+                'text' => $this->formatMessage($reports),
             ];
             $client->post($this->webhookUrl, [
                 'json' => $payload,
@@ -49,8 +53,15 @@ class SlackTarget extends ReportTarget
         return true;
     }
 
-    public function formatMessage(Report $report)
+    /**
+     * @param array<int, Report> $reports
+     *
+     * @return string
+     */
+    public function formatMessage(array $reports)
     {
-
+        return collect($reports)->map(function(Report $report) {
+            return $report->name;
+        })->implode(', ');
     }
 }

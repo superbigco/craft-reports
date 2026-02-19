@@ -1,12 +1,6 @@
 <?php
-/**
- * Reports plugin for Craft CMS 3.x
- *
- * Write reports with Twig.
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2019 Superbig
- */
+
+declare(strict_types=1);
 
 namespace superbig\reports;
 
@@ -18,50 +12,49 @@ use yii\base\Event;
 
 trait UserPermissionsTrait
 {
-    public function initPermissions()
+    public function initPermissions(): void
     {
         Event::on(
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
-            function(RegisterUserPermissionsEvent $event) {
-
-                $event->permissions[ $this->name ] = $this->_getPermissions();
+            function(RegisterUserPermissionsEvent $event): void {
+                $event->permissions[] = [
+                    'heading' => $this->name,
+                    'permissions' => $this->_getPermissions(),
+                ];
             }
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
-        $navItem          = parent::getCpNavItem();
+        $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
-        $subNav           = [];
+        $subNav = [];
 
         /** @var User $currentUser */
         $currentUser = Craft::$app->getUser()->getIdentity();
 
         $permissions = [
             [
-                'type'   => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
-                'id'     => 'reports',
+                'type' => [Reports::PERMISSION_MANAGE_REPORTS, Reports::PERMISSION_RUN_REPORTS],
+                'id' => 'reports',
                 'config' => [
                     'label' => 'Reports',
-                    'url'   => 'reports',
+                    'url' => 'reports',
                 ],
             ],
             [
-                'type'   => Reports::PERMISSION_MANAGE_TARGETS,
-                'id'     => 'targets',
+                'type' => Reports::PERMISSION_MANAGE_TARGETS,
+                'id' => 'targets',
                 'config' => [
                     'label' => 'Report Targets',
-                    'url'   => 'reports/targets',
+                    'url' => 'reports/targets',
                 ],
             ],
         ];
 
-        $checkPermissions = function($permissions) use ($currentUser) {
+        $checkPermissions = function(array $permissions) use ($currentUser): bool {
             $results = array_map(function($permission) use ($currentUser) {
                 return $currentUser->can($permission);
             }, $permissions);
@@ -70,10 +63,12 @@ trait UserPermissionsTrait
         };
 
         foreach ($permissions as $permission) {
-            $canAccess = !\is_array($permission['type']) ? $currentUser->can($permission['type']) : $checkPermissions($permission['type']);
+            $canAccess = !\is_array($permission['type'])
+                ? $currentUser->can($permission['type'])
+                : $checkPermissions($permission['type']);
 
             if ($canAccess) {
-                $subNav[ $permission['id'] ] = $permission['config'];
+                $subNav[$permission['id']] = $permission['config'];
             }
         }
 
@@ -84,10 +79,13 @@ trait UserPermissionsTrait
         return $navItem;
     }
 
-    private function _getPermissions()
+    /**
+     * @return array<string, array{label: string}>
+     */
+    private function _getPermissions(): array
     {
         $permissions = [
-            Reports::PERMISSION_RUN_REPORTS    => 'Run Reports',
+            Reports::PERMISSION_RUN_REPORTS => 'Run Reports',
             Reports::PERMISSION_MANAGE_REPORTS => 'Manage Reports',
             Reports::PERMISSION_MANAGE_TARGETS => 'Manage Export Targets',
         ];
@@ -95,7 +93,7 @@ trait UserPermissionsTrait
         $result = [];
 
         foreach ($permissions as $key => $label) {
-            $result[ $key ] = ['label' => Craft::t('reports', $label)];
+            $result[$key] = ['label' => Craft::t('reports', $label)];
         }
 
         return $result;

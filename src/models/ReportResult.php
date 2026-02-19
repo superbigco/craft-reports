@@ -10,10 +10,9 @@
 
 namespace superbig\reports\models;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Model;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -22,41 +21,20 @@ use craft\base\Model;
  */
 class ReportResult extends Model
 {
-    // Public Properties
-    // =========================================================================
+    public array $header = [];
+    public array $content = [];
+    public array $rows = [];
+    public string $filename = 'output';
+    public array $fields = [];
 
-    /**  @var array */
-    public $header = [];
-
-    /**  @var array */
-    public $content = [];
-
-    /**  @var array */
-    public $rows = [];
-
-    /**  @var string */
-    public $filename = 'output';
-
-    /**  @var array */
-    public $fields = [];
-
-
-    // Public Methods
-    // =========================================================================
-
-    public function init()
+    public function init(): void
     {
         if (!empty($this->rows)) {
             $this->content = $this->rows;
         }
     }
 
-    /**
-     * @param array $content
-     *
-     * @return $this
-     */
-    public function append(array $content = []): self
+    public function append(array $content = []): static
     {
         if (isset($content[0]) && !\is_array($content[0])) {
             $content = [$content];
@@ -66,7 +44,7 @@ class ReportResult extends Model
         return $this;
     }
 
-    public function setHeader(array $headers = [])
+    public function setHeader(array $headers = []): static
     {
         $this->header = $headers;
 
@@ -83,12 +61,7 @@ class ReportResult extends Model
         return $this->content;
     }
 
-    /**
-     * @param $content
-     *
-     * @return $this
-     */
-    public function setContent($content): self
+    public function setContent(array $content): self
     {
         $this->content = $content;
 
@@ -99,33 +72,25 @@ class ReportResult extends Model
     {
         return [
             'header' => $this->header,
-            'rows'   => $this->content,
+            'rows' => $this->content,
         ];
     }
 
     public function getFilename($ext = null): string
     {
-        $filename = pathinfo(filter_var($this->filename, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW), PATHINFO_FILENAME);
+        $filename = pathinfo(preg_replace('/[\x00-\x1F]/', '', strip_tags($this->filename)), PATHINFO_FILENAME);
 
         return "{$filename}{$ext}";
     }
 
-    /**
-     * @param null $filename
-     *
-     * @return $this
-     */
-    public function setFilename($filename = null): self
+    public function setFilename(string $filename = null): static
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function rules(): array
     {
         return [];
     }

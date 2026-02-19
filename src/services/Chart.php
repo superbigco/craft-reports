@@ -10,10 +10,9 @@
 
 namespace superbig\reports\services;
 
-use superbig\reports\Reports;
-
-use Craft;
 use craft\base\Component;
+
+use superbig\reports\Reports;
 
 /**
  * @author    Superbig
@@ -28,13 +27,8 @@ class Chart extends Component
     /*
      * @return mixed
      */
-    public function exampleService()
+    public function exampleService(): string
     {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (Reports::$plugin->getSettings()->someAttribute) {
-        }
-
-        return $result;
+        return 'something';
     }
 }

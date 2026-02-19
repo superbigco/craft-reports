@@ -10,13 +10,13 @@
 
 namespace superbig\reports\services;
 
-use craft\helpers\FileHelper;
-use craft\helpers\StringHelper;
-use League\Csv\Writer;
-use superbig\reports\Reports;
-
 use Craft;
 use craft\base\Component;
+use craft\helpers\FileHelper;
+use craft\helpers\StringHelper;
+
+use League\Csv\Writer;
+use superbig\reports\Reports;
 use yii\base\Exception;
 
 /**
@@ -28,24 +28,21 @@ class Export extends Component
 {
     // Public Methods
     // =========================================================================
-
     /**
-     * @param \superbig\reports\models\Report $report
      *
-     * @return array
      * @throws Exception
      * @throws \yii\db\Exception
+     * @return array<string, string>
      */
-    public function csv(\superbig\reports\models\Report $report)
+    public function csv(\superbig\reports\models\Report $report): array
     {
         // @todo Check if successful
-        $result   = $report->run();
+        $result = $report->run();
         $filename = $result->getFilename() . '-' . date('YmdHis') . '.csv';
-        $csv      = Writer::createFromString('');
+        $csv = Writer::createFromString('');
 
         if (!empty($result->getHeader())) {
             $csv->insertOne($result->getHeader());
-
         }
 
         if (!empty($result->getContent())) {
@@ -53,26 +50,21 @@ class Export extends Component
         }
 
         // @todo Remove this once all plugins is using 9.0
-        $content  = method_exists($csv, 'getContent') ? $csv->getContent() : (string)$csv;
+        $content = method_exists($csv, 'getContent') ? $csv->getContent() : (string)$csv;
         $mimeType = 'text/csv';
-        $path     = $this->_write($content, $filename, $mimeType);
+        $path = $this->_write($content, $filename);
 
         return [
             'filename' => $filename,
-            'path'     => $path,
+            'path' => $path,
             'mimeType' => $mimeType,
         ];
     }
 
-    private function _write($content, $filename, $mimeType): string
+    private function _write(string $content, $filename): string
     {
-        $tempPath     = Craft::$app->path->getTempPath() . DIRECTORY_SEPARATOR . 'reports' . DIRECTORY_SEPARATOR;
-        $tempFilename = StringHelper::randomString(12) . "-{$filename}";
-        $config       = [
-            'filename'     => $filename,
-            'tempFilename' => $tempFilename,
-            'mimeType'     => $mimeType,
-        ];
+        $tempPath = Craft::$app->path->getTempPath() . DIRECTORY_SEPARATOR . 'reports' . DIRECTORY_SEPARATOR;
+        $tempFilename = StringHelper::randomString(12) . sprintf('-%s', $filename);
 
         $path = $tempPath . $tempFilename;
         FileHelper::writeToFile($path, $content);

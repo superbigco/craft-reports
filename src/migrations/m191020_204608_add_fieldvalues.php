@@ -2,7 +2,6 @@
 
 namespace superbig\reports\migrations;
 
-use Craft;
 use craft\db\Migration;
 use superbig\reports\records\ReportsRecord;
 
