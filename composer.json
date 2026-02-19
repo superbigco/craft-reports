@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0",
+        "craftcms/cms": "^5.9.12",
         "league/csv": "^8.1|^9.0"
     },
     "autoload": {
